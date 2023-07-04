@@ -1,6 +1,7 @@
 package seeder
 
 import (
+	"ecommerce/internal/entity"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -15,6 +16,20 @@ func NewRoleSeeder(db *gorm.DB) *RoleSeeder {
 }
 
 func (s *RoleSeeder) Run() {
-	// Implement your role seeder logic here
-	fmt.Println("Running role seeder...")
+	// Implement your role seeding logic here
+
+	roles := []entity.Role{
+		{Name: "Admin"},
+		{Name: "User"},
+		{Name: "Manager"},
+	}
+
+	for _, role := range roles {
+		result := s.DB.Create(&role)
+		if result.Error != nil {
+			fmt.Println("Failed to create role:", result.Error)
+			return
+		}
+	}
+	fmt.Println("Role seeding completed successfully")
 }

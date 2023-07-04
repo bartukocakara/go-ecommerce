@@ -75,8 +75,9 @@ func runSeeders(db *gorm.DB) {
 	// Run your seeders here
 	// Example:
 	userSeeder := seeder.NewUserSeeder(db)
+	roleSeeder := seeder.NewRoleSeeder(db)
 	userSeeder.Run()
-
+	roleSeeder.Run()
 	fmt.Println("Running seeders...")
 }
 
@@ -84,7 +85,9 @@ func runMigrations(db *gorm.DB) {
 	// Run your migrations here
 	// Example:
 	userMigration := migration.NewUserMigration(db)
+	roleMigration := migration.NewRoleMigration(db)
 	userMigration.Migrate()
+	roleMigration.Migrate()
 
 	fmt.Println("Running migrations...")
 }

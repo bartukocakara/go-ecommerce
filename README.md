@@ -15,7 +15,12 @@ ASCII Treedir
 │   │   ├── jwt.middleware.go
 │   │   ├── role-permission.middleware.go
 │   │   └── cors.middleware.go
-│   └── 
+│   ├── seeder/
+│   │   └── user.seeder.go
+│   │   └── role.seeder.go
+│   └── migration/
+│   │   └── user.migration.go
+│   │   └── role.migration.go
 ├── container/
 │   ├── user.container.go
 │   └── role.container.go

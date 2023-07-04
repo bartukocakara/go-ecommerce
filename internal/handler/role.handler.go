@@ -62,10 +62,7 @@ func (h *roleHandler) CreateRole(c *fiber.Ctx) error {
 	}
 
 	Role := &entity.Role{
-		FirstName: createRoleDTO.FirstName,
-		LastName:  createRoleDTO.LastName,
-		Email:     createRoleDTO.Email,
-		Password:  createRoleDTO.Password,
+		Name: createRoleDTO.Name,
 	}
 
 	err := h.roleService.CreateRole(Role)
@@ -92,10 +89,8 @@ func (h *roleHandler) UpdateRole(c *fiber.Ctx) error {
 	}
 
 	Role := &entity.Role{
-		ID:        uint(RoleID),
-		FirstName: updateRoleDTO.FirstName,
-		LastName:  updateRoleDTO.LastName,
-		Email:     updateRoleDTO.Email,
+		ID:   uint(RoleID),
+		Name: updateRoleDTO.Name,
 	}
 
 	err = h.roleService.UpdateRole(Role)
