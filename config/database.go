@@ -17,6 +17,8 @@ func NewDatabaseConnection() (*gorm.DB, error) {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 
+	fmt.Println("Database driver:", driver)
+
 	var dsn string
 	var db *gorm.DB
 	var err error

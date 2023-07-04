@@ -25,3 +25,13 @@ ASCII Treedir
 ├── main.go
 └── .env
 ```
+
+migration command 
+```
+go run main.go migrate
+```
+
+seed command 
+```
+go run main.go seed
+```

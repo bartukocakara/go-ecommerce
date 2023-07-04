@@ -13,6 +13,9 @@ type Container struct {
 	UserHandler    handler.UserHandler
 	UserService    service.UserService
 	UserRepository repository.UserRepository
+	RoleHandler    handler.RoleHandler
+	RoleService    service.RoleService
+	RoleRepository repository.RoleRepository
 }
 
 func NewContainer(db *gorm.DB) *Container {
@@ -23,12 +26,15 @@ func NewContainer(db *gorm.DB) *Container {
 
 func (c *Container) BindRepositories() {
 	c.UserRepository = repository.NewUserRepository(c.DB)
+	c.RoleRepository = repository.NewRoleRepository(c.DB)
 }
 
 func (c *Container) BindServices() {
 	c.UserService = service.NewUserService(c.UserRepository)
+	c.RoleService = service.NewRoleService(c.RoleRepository)
 }
 
 func (c *Container) BindHandlers() {
 	c.UserHandler = handler.NewUserHandler(c.UserService)
+	c.RoleHandler = handler.NewRoleHandler(c.RoleService)
 }
