@@ -40,10 +40,12 @@ func NewApp() (*fiber.App, error) {
 	// Bind dependencies in the container
 	c.BindUser()
 	c.BindRole()
+	c.BindAuth()
 
 	// Setup routes
 	route.SetupUserRoutes(app, c.UserHandler)
 	route.SetupRoleRoutes(app, c.RoleHandler)
+	route.SetupAuthRoutes(app, c.AuthHandler)
 
 	runSeedAndMigrationCommands(db)
 

@@ -16,6 +16,8 @@ type Container struct {
 	RoleHandler    handler.RoleHandler
 	RoleService    service.RoleService
 	RoleRepository repository.RoleRepository
+	AuthHandler    handler.AuthHandler
+	AuthService    service.AuthService
 }
 
 func NewContainer(db *gorm.DB) *Container {
