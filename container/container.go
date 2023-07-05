@@ -31,18 +31,3 @@ func NewContainer(db *gorm.DB) *Container {
 		DB: db,
 	}
 }
-
-func (c *Container) BindRepositories() {
-	c.UserRepository = repository.NewUserRepository(c.DB)
-	c.RoleRepository = repository.NewRoleRepository(c.DB)
-}
-
-func (c *Container) BindServices() {
-	c.UserService = service.NewUserService(c.UserRepository)
-	c.RoleService = service.NewRoleService(c.RoleRepository)
-}
-
-func (c *Container) BindHandlers() {
-	c.UserHandler = handler.NewUserHandler(c.UserService)
-	c.RoleHandler = handler.NewRoleHandler(c.RoleService)
-}
