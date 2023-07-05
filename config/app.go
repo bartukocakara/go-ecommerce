@@ -41,11 +41,15 @@ func NewApp() (*fiber.App, error) {
 	c.BindUser()
 	c.BindRole()
 	c.BindAuth()
+	c.BindProduct()
+	c.BindCategory()
 
 	// Setup routes
 	route.SetupUserRoutes(app, c.UserHandler)
 	route.SetupRoleRoutes(app, c.RoleHandler)
 	route.SetupAuthRoutes(app, c.AuthHandler)
+	route.SetupProductRoutes(app, c.ProductHandler)
+	route.SetupCategoryRoutes(app, c.CategoryHandler)
 
 	runSeedAndMigrationCommands(db)
 
@@ -78,8 +82,12 @@ func runSeeders(db *gorm.DB) {
 	// Example:
 	userSeeder := seeder.NewUserSeeder(db)
 	roleSeeder := seeder.NewRoleSeeder(db)
+	productSeeder := seeder.NewProductSeeder(db)
+	categorySeeder := seeder.NewCategorySeeder(db)
 	userSeeder.Run()
 	roleSeeder.Run()
+	productSeeder.Run()
+	categorySeeder.Run()
 	fmt.Println("Running seeders...")
 }
 
@@ -88,8 +96,12 @@ func runMigrations(db *gorm.DB) {
 	// Example:
 	userMigration := migration.NewUserMigration(db)
 	roleMigration := migration.NewRoleMigration(db)
+	productMigration := migration.NewProductMigration(db)
+	categoryMigration := migration.NewCategoryMigration(db)
 	userMigration.Migrate()
 	roleMigration.Migrate()
+	productMigration.Migrate()
+	categoryMigration.Migrate()
 
 	fmt.Println("Running migrations...")
 }
