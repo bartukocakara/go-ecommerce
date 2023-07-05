@@ -9,4 +9,5 @@ import (
 func SetupAuthRoutes(app *fiber.App, handler handler.AuthHandler) {
 	app.Post("/register", handler.Register)
 	app.Post("/login", handler.Login)
+	app.Post("/auth/forget-password", handler.ForgetPassword)
 }

@@ -11,3 +11,7 @@ type RegisterDto struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
+
+type ForgetPasswordDto struct {
+	Email string `json:"email"`
+}

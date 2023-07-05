@@ -46,3 +46,27 @@ func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{"token": token})
 }
+
+func (h *AuthHandler) ForgetPassword(c *fiber.Ctx) error {
+	// Parse the request body into a DTO
+	var forgetPasswordDto dto.ForgetPasswordDto
+	if err := c.BodyParser(&forgetPasswordDto); err != nil {
+		return err
+	}
+
+	// Call the service method
+	resetToken, err := h.AuthService.ForgetPassword(forgetPasswordDto)
+
+	if err != nil {
+		// Handle the error and return an appropriate response
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to process forget password request",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"token":   resetToken,
+		"message": "Forget password request processed successfully",
+	})
+}

@@ -1,9 +1,13 @@
 package service
 
 import (
+	"crypto/rand"
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
 	"ecommerce/internal/repository"
+	"encoding/base64"
+	"fmt"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -11,6 +15,7 @@ import (
 
 type AuthService struct {
 	UserRepository repository.UserRepository
+	// MailService    MailService
 }
 
 func NewAuthService(userRepository repository.UserRepository) *AuthService {
@@ -70,4 +75,43 @@ func (s *AuthService) Login(loginDto dto.LoginDto) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func (s *AuthService) ForgetPassword(forgetPasswordDto dto.ForgetPasswordDto) (string, error) {
+	// Check if the user exists in the database
+	user, err := s.UserRepository.GetUserByEmail(forgetPasswordDto.Email)
+	if err != nil {
+		return "", err
+	}
+
+	// Generate a password reset token for the user
+	resetToken, err := GeneratePasswordResetToken(user.ID)
+	if err != nil {
+		return "", err
+	}
+
+	// Send the password reset email to the user
+	// err = s.MailService.SendForgetPasswordEmail(user.Email, resetToken)
+	// if err != nil {
+	// 	return err
+	// }
+
+	return resetToken, nil
+}
+
+func GeneratePasswordResetToken(userID uint) (string, error) {
+	// Generate a random token
+	token := make([]byte, 32)
+	_, err := rand.Read(token)
+	if err != nil {
+		return "", err
+	}
+
+	// Encode the token to base64 string
+	tokenString := base64.URLEncoding.EncodeToString(token)
+
+	// Generate a unique reset token using user ID and timestamp
+	resetToken := fmt.Sprintf("%d_%s_%d", userID, tokenString, time.Now().Unix())
+
+	return resetToken, nil
 }
