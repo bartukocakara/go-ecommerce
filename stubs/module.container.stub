@@ -1,0 +1,13 @@
+package container
+
+import (
+	"ecommerce/internal/handler"
+	"ecommerce/internal/repository"
+	"ecommerce/internal/service"
+)
+
+func (c *Container) Bind{{ .ModuleTitle }}() {
+	c.{{ .ModuleTitle }}Repository = repository.New{{ .ModuleTitle }}Repository(c.DB)
+	c.{{ .ModuleTitle }}Service = service.New{{ .ModuleTitle }}Service(c.{{ .ModuleTitle }}Repository)
+	c.{{ .ModuleTitle }}Handler = handler.New{{ .ModuleTitle }}Handler(c.{{ .ModuleTitle }}Service)
+}

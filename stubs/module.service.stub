@@ -1,0 +1,45 @@
+package service
+
+import (
+	"ecommerce/internal/dto"
+	"ecommerce/internal/entity"
+	"ecommerce/internal/repository"
+)
+
+type {{ .ModuleTitle }}Service interface {
+	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
+	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error)
+	Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+	Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+	Delete{{ .ModuleTitle }}(id uint) error
+}
+
+type {{ .ModuleVar }}Service struct {
+	{{ .ModuleVar }}Repository repository.{{ .ModuleTitle }}Repository
+}
+
+func New{{ .ModuleTitle }}Service({{ .ModuleVar }}Repository repository.{{ .ModuleTitle }}Repository) {{ .ModuleTitle }}Service {
+	return &{{ .ModuleVar }}Service{
+		{{ .ModuleVar }}Repository: {{ .ModuleVar }}Repository,
+	}
+}
+
+func (s *{{ .ModuleVar }}Service) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
+	return s.{{ .ModuleVar }}Repository.Get{{ .ModuleTitle }}ByID(id)
+}
+
+func (s *{{ .ModuleVar }}Service) Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error) {
+	return s.{{ .ModuleVar }}Repository.Get{{ .ModuleTitle }}s(offset, limit, filterDto)
+}
+
+func (s *{{ .ModuleVar }}Service) Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
+	return s.{{ .ModuleVar }}Repository.Create{{ .ModuleTitle }}({{ .ModuleVar }})
+}
+
+func (s *{{ .ModuleVar }}Service) Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
+	return s.{{ .ModuleVar }}Repository.Update{{ .ModuleTitle }}({{ .ModuleVar }})
+}
+
+func (s *{{ .ModuleVar }}Service) Delete{{ .ModuleTitle }}(id uint) error {
+	return s.{{ .ModuleVar }}Repository.Delete{{ .ModuleTitle }}(id)
+}

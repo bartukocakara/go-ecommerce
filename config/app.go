@@ -35,7 +35,7 @@ const (
 	routeStubPath      = "./stubs/module.route.stub"
 	dtoStubPath        = "./stubs/module.dto.stub"
 	entityStubPath     = "./stubs/module.entity.stub"
-	containerStubPath  = "./stubs/module.entity.stub"
+	containerStubPath  = "./stubs/module.container.stub"
 	seederStubPath     = "./stubs/module.seeder.stub"
 	migrationStubPath  = "./stubs/module.migration.stub"
 )
@@ -70,6 +70,7 @@ func NewApp() (*fiber.App, error) {
 	c.BindCategory()
 	c.BindBasket()
 	c.BindBasketItem()
+	c.BindOrder()
 
 	// Setup routes
 	route.SetupUserRoutes(app, c.UserHandler)
@@ -79,6 +80,7 @@ func NewApp() (*fiber.App, error) {
 	route.SetupCategoryRoutes(app, c.CategoryHandler)
 	route.SetupBasketRoutes(app, c.BasketHandler)
 	route.SetupBasketItemRoutes(app, c.BasketItemHandler)
+	route.SetupOrderRoutes(app, c.OrderHandler)
 
 	commands(db)
 
@@ -176,6 +178,18 @@ func loadStubTemplates() (*stubTemplates, error) {
 	}
 	templates.Handler = handlerContent
 
+	migrationContent, err := loadTemplateContent(migrationStubPath)
+	if err != nil {
+		return nil, err
+	}
+	templates.Migration = migrationContent
+
+	seederContent, err := loadTemplateContent(seederStubPath)
+	if err != nil {
+		return nil, err
+	}
+	templates.Seeder = seederContent
+
 	return templates, nil
 }
 
@@ -243,6 +257,7 @@ func generateFiles(moduleName string, templates *stubTemplates) {
 
 	// Define the file names and content for the module
 	files := map[string]string{
+		fmt.Sprintf("internal/handler/%s.handler.go", moduleName):       generateContent(templates.Handler, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
 		fmt.Sprintf("internal/repository/%s.repository.go", moduleName): generateContent(templates.Repository, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
 		fmt.Sprintf("internal/service/%s.service.go", moduleName):       generateContent(templates.Service, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
 		fmt.Sprintf("internal/route/%s.route.go", moduleName):           generateContent(templates.Route, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),

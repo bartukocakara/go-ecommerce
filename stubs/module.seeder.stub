@@ -1,0 +1,33 @@
+package seeder
+
+import (
+	"ecommerce/internal/entity"
+	"fmt"
+	"time"
+
+	"gorm.io/gorm"
+)
+
+type {{ .ModuleTitle }}Seeder struct {
+	DB *gorm.DB
+}
+
+func New{{ .ModuleTitle }}Seeder(db *gorm.DB) *{{ .ModuleTitle }}Seeder {
+	return &{{ .ModuleTitle }}Seeder{DB: db}
+}
+
+func (s *{{ .ModuleTitle }}Seeder) Run() {
+	{{ .ModuleVar }} := []entity.{{ .ModuleTitle }}{
+		{Name: "{{ .ModuleTitle }} 1", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Name: "{{ .ModuleTitle }} 2", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		// Add more {{ .ModuleTitle }} data as needed
+	}
+
+	err := s.DB.Create(&{{ .ModuleVar }}).Error
+	if err != nil {
+		fmt.Println("Failed to seed {{ .ModuleVar }}:", err)
+		return
+	}
+
+	fmt.Println("{{ .ModuleTitle }} seeding completed successfully.")
+}

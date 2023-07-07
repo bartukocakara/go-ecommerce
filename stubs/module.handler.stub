@@ -1,0 +1,93 @@
+package handler
+
+import (
+	"ecommerce/internal/dto"
+	"ecommerce/internal/entity"
+	"ecommerce/internal/service"
+	"github.com/gofiber/fiber/v2"
+)
+
+type {{ .ModuleTitle }}Handler interface {
+	Get{{ .ModuleTitle }}s(c *fiber.Ctx) error
+	Get{{ .ModuleTitle }}ByID(c *fiber.Ctx) error
+	Create{{ .ModuleTitle }}(c *fiber.Ctx) error
+	Update{{ .ModuleTitle }}(c *fiber.Ctx) error
+	Delete{{ .ModuleTitle }}(c *fiber.Ctx) error
+}
+
+type {{ .ModuleVar }}Handler struct {
+	{{ .ModuleVar }}Service service.{{ .ModuleTitle }}Service
+}
+
+func New{{ .ModuleTitle }}Handler({{ .ModuleVar }}Service service.{{ .ModuleTitle }}Service) {{ .ModuleTitle }}Handler {
+	return &{{ .ModuleVar }}Handler{
+		{{ .ModuleVar }}Service: {{ .ModuleVar }}Service,
+	}
+}
+
+func (h *{{ .ModuleVar }}Handler) Get{{ .ModuleTitle }}s(c *fiber.Ctx) error {
+	offset, limit := parsePaginationParams(c)
+	filterDto := parseFilterParams(c).(*dto.Filter{{ .ModuleTitle }}Dto)
+
+	{{ .ModuleVar }}s, err := h.{{ .ModuleVar }}Service.Get{{ .ModuleTitle }}s(offset, limit, filter{{ .ModuleTitle }}Dto)
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return c.JSON({{ .ModuleVar }}s)
+}
+
+func (h *{{ .ModuleVar }}Handler) Get{{ .ModuleTitle }}ByID(c *fiber.Ctx) error {
+	id := parseIDParam(c)
+
+	{{ .ModuleVar }}, err := h.{{ .ModuleVar }}Service.Get{{ .ModuleTitle }}ByID(id)
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return c.JSON({{ .ModuleVar }})
+}
+
+func (h *{{ .ModuleVar }}Handler) Create{{ .ModuleTitle }}(c *fiber.Ctx) error {
+	{{ .ModuleVar }} := new(entity.{{ .ModuleTitle }})
+
+	if err := parseBody(c, {{ .ModuleVar }}); err != nil {
+		return handleError(c, err)
+	}
+
+	err := h.{{ .ModuleVar }}Service.Create{{ .ModuleTitle }}({{ .ModuleVar }})
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return c.JSON({{ .ModuleVar }})
+}
+
+func (h *{{ .ModuleVar }}Handler) Update{{ .ModuleTitle }}(c *fiber.Ctx) error {
+	id := parseIDParam(c)
+	{{ .ModuleVar }} := new(entity.{{ .ModuleTitle }})
+
+	if err := parseBody(c, {{ .ModuleVar }}); err != nil {
+		return handleError(c, err)
+	}
+
+	{{ .ModuleVar }}.ID = id
+
+	err := h.{{ .ModuleVar }}Service.Update{{ .ModuleTitle }}({{ .ModuleVar }})
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return c.JSON({{ .ModuleVar }})
+}
+
+func (h *{{ .ModuleVar }}Handler) Delete{{ .ModuleTitle }}(c *fiber.Ctx) error {
+	id := parseIDParam(c)
+
+	err := h.{{ .ModuleVar }}Service.Delete{{ .ModuleTitle }}(id)
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
+}

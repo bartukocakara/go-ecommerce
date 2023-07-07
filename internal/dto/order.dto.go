@@ -1,16 +1,16 @@
 package dto
 
-type Create{{ .ModuleTitle }}Dto struct {
+type CreateOrderDto struct {
 	Name string
 	// Add other filter fields as per your requirements
 }
 
-type Update{{ .ModuleTitle }}Dto struct {
+type UpdateOrderDto struct {
 	Name string
 	// Add other filter fields as per your requirements
 }
 
-type Filter{{ .ModuleTitle }}Dto struct {
+type FilterOrderDto struct {
 	Name string
 	// Add other filter fields as per your requirements
 }

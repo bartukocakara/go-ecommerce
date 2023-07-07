@@ -1,15 +1,15 @@
 package repository
 
 import (
-	"your-app/internal/dto"
-	"your-app/internal/entity"
+	"ecommerce/internal/dto"
+	"ecommerce/internal/entity"
 
 	"gorm.io/gorm"
 )
 
 type {{ .ModuleTitle }}Repository interface {
-	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
 	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error)
+	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
 	Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
 	Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
 	Delete{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
@@ -25,17 +25,8 @@ func New{{ .ModuleTitle }}Repository(db *gorm.DB) {{ .ModuleTitle }}Repository {
 	}
 }
 
-func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
-	var {{ .ModuleVar }} entity.{{ .ModuleTitle }}
-	result := r.db.First(&{{ .ModuleVar }}, id)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &{{ .ModuleVar }}, nil
-}
-
 func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error) {
-	var {{ .ModuleVars }} []entity.{{ .ModuleTitle }}
+	var {{ .ModuleVar }}s []entity.{{ .ModuleTitle }}
 
 	// Apply pagination and filtering logic
 	query := r.db.Offset(offset).Limit(limit)
@@ -46,12 +37,21 @@ func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}s(offset, limit int, f
 		}
 	}
 
-	result := query.Find(&{{ .ModuleVars }})
+	result := query.Find(&{{ .ModuleVar }}s)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	return {{ .ModuleVars }}, nil
+	return {{ .ModuleVar }}s, nil
+}
+
+func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
+	var {{ .ModuleVar }} entity.{{ .ModuleTitle }}
+	result := r.db.First(&{{ .ModuleVar }}, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &{{ .ModuleVar }}, nil
 }
 
 func (r *{{ .ModuleVar }}Repository) Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {

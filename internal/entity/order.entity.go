@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type {{ .ModuleTitle }} struct {
+type Order struct {
 	ID   uint   `gorm:"primaryKey"`
 	Name string `gorm:"unique"`
 	// Add other fields as per your requirements

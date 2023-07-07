@@ -30,6 +30,9 @@ type Container struct {
 	BasketItemHandler    handler.BasketItemHandler
 	BasketItemService    service.BasketItemService
 	BasketItemRepository repository.BasketItemRepository
+	OrderHandler         handler.OrderHandler
+	OrderService         service.OrderService
+	OrderRepository      repository.OrderRepository
 }
 
 func NewContainer(db *gorm.DB) *Container {
