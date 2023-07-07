@@ -1,0 +1,79 @@
+package repository
+
+import (
+	"your-app/internal/dto"
+	"your-app/internal/entity"
+
+	"gorm.io/gorm"
+)
+
+type {{ .ModuleTitle }}Repository interface {
+	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
+	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error)
+	Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+	Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+	Delete{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+}
+
+type {{ .ModuleVar }}Repository struct {
+	db *gorm.DB
+}
+
+func New{{ .ModuleTitle }}Repository(db *gorm.DB) {{ .ModuleTitle }}Repository {
+	return &{{ .ModuleVar }}Repository{
+		db: db,
+	}
+}
+
+func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
+	var {{ .ModuleVar }} entity.{{ .ModuleTitle }}
+	result := r.db.First(&{{ .ModuleVar }}, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &{{ .ModuleVar }}, nil
+}
+
+func (r *{{ .ModuleVar }}Repository) Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error) {
+	var {{ .ModuleVars }} []entity.{{ .ModuleTitle }}
+
+	// Apply pagination and filtering logic
+	query := r.db.Offset(offset).Limit(limit)
+
+	if filterDto != nil {
+		if filterDto.Name != "" {
+			query = query.Where("name LIKE ?", "%"+filterDto.Name+"%")
+		}
+	}
+
+	result := query.Find(&{{ .ModuleVars }})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return {{ .ModuleVars }}, nil
+}
+
+func (r *{{ .ModuleVar }}Repository) Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
+	result := r.db.Create({{ .ModuleVar }})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (r *{{ .ModuleVar }}Repository) Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
+	result := r.db.Save({{ .ModuleVar }})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (r *{{ .ModuleVar }}Repository) Delete{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
+	result := r.db.Delete({{ .ModuleVar }})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

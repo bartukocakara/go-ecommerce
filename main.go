@@ -1,11 +1,15 @@
 package main
 
 import (
+	"embed"
 	"log"
 
 	"ecommerce/config"
 	"ecommerce/internal/middleware"
 )
+
+//go:embed stubs/*.stub
+var stubs embed.FS
 
 func main() {
 	// Create a new Fiber app instance
