@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"ecommerce/config"
-	"ecommerce/internal/middleware"
 )
 
 //go:embed stubs/*.stub
@@ -18,11 +17,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Apply middlewares
-	app.Use(middleware.CORS())
-	app.Use(middleware.JWT())
-	app.Use(middleware.RolePermission([]string{"admin", "superuser"}))
-
 	// Start the server
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":8000"))
 }

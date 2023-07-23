@@ -12,7 +12,6 @@ func JWT() fiber.Handler {
 		// Get the JWT token from the Authorization header
 		authHeader := c.Get("Authorization")
 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
-
 		// Parse and validate the JWT token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Provide the secret key or public key to validate the token
@@ -27,8 +26,10 @@ func JWT() fiber.Handler {
 
 		// Set the authenticated user ID in the context
 		claims := token.Claims.(jwt.MapClaims)
-		userID := claims["user_id"].(string)
+		userID := claims["user_id"].(float64)
+		email := claims["email"].(string)
 		c.Locals("user_id", userID)
+		c.Locals("email", email)
 
 		// Continue to the next middleware or route handler
 		return c.Next()

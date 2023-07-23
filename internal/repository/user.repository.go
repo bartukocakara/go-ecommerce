@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	GetUsers() ([]entity.User, error)
+	GetUsers(offset, limit int) ([]*entity.User, int, error)
 	GetUserByID(id uint) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, error)
 	CreateUser(user *entity.User) error
@@ -25,13 +25,21 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) GetUsers() ([]entity.User, error) {
-	var users []entity.User
-	result := r.db.Find(&users)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *userRepository) GetUsers(offset, limit int) ([]*entity.User, int, error) {
+	var users []*entity.User
+	var total int64
+
+	// Count total number of users
+	if err := r.db.Model(&entity.User{}).Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
-	return users, nil
+
+	// Fetch users with pagination
+	if err := r.db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return users, int(total), nil
 }
 
 func (r *userRepository) GetUserByID(id uint) (*entity.User, error) {
@@ -53,11 +61,11 @@ func (r *userRepository) GetUserByEmail(email string) (*entity.User, error) {
 }
 
 func (r *userRepository) CreateUser(user *entity.User) error {
-	result := r.db.Create(user)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+    result := r.db.Create(user)
+    if result.Error != nil {
+        return result.Error
+    }
+    return nil
 }
 
 func (r *userRepository) UpdateUser(user *entity.User) error {

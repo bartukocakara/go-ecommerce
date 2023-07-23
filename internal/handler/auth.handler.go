@@ -3,6 +3,7 @@ package handler
 import (
 	"ecommerce/internal/dto"
 	"ecommerce/internal/service"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,16 +21,25 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 func (h *AuthHandler) Register(ctx *fiber.Ctx) error {
 	var registerDto dto.RegisterDto
 	if err := ctx.BodyParser(&registerDto); err != nil {
+		fmt.Println("Error parsing request body:", err)
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request")
 	}
 
 	// Call the corresponding service method to handle the registration logic
-	err := h.AuthService.Register(registerDto)
+	user, err := h.AuthService.Register(registerDto)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to register")
 	}
 
-	return ctx.JSON(fiber.Map{"message": "Registration successful"})
+	// Return the custom response
+	response := createResponse(fiber.StatusCreated, "OK", fiber.Map{
+		"user":         user.User,
+		"access_token": user.AccessToken, // Replace this with the actual access token
+		"token_type":   "bearer",
+		"expires_in":   3600,
+	})
+
+	return ctx.Status(fiber.StatusCreated).JSON(response)
 }
 
 func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
@@ -39,12 +49,20 @@ func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	// Call the corresponding service method to handle the login logic
-	token, err := h.AuthService.Login(loginDto)
+	loginResponse, err := h.AuthService.Login(loginDto)
 	if err != nil {
 		return fiber.NewError(fiber.StatusUnauthorized, "Invalid credentials")
 	}
 
-	return ctx.JSON(fiber.Map{"token": token})
+	// Return the custom response
+	response := createResponse(fiber.StatusCreated, "OK", fiber.Map{
+		"user":         loginResponse.User,
+		"access_token": loginResponse.AccessToken, // Replace this with the actual access token
+		"token_type":   "bearer",
+		"expires_in":   3600,
+	})
+
+	return ctx.Status(fiber.StatusCreated).JSON(response)
 }
 
 func (h *AuthHandler) ForgetPassword(c *fiber.Ctx) error {

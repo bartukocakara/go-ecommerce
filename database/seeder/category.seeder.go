@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bxcodec/faker/v3"
 	"gorm.io/gorm"
 )
 
@@ -17,10 +18,15 @@ func NewCategorySeeder(db *gorm.DB) *CategorySeeder {
 }
 
 func (s *CategorySeeder) Run() {
-	categories := []entity.Category{
-		{Name: "Category 1", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		{Name: "Category 2", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		// Add more category data as needed
+	var categories []entity.Category
+
+	for i := 0; i < 10; i++ {
+		category := entity.Category{
+			Name:      faker.Word(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		categories = append(categories, category)
 	}
 
 	err := s.DB.Create(&categories).Error

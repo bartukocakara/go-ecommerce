@@ -56,16 +56,19 @@ func NewApp() (*fiber.App, error) {
 
 	// Middleware setup
 	app.Use(middleware.CORS())
+	c := container.NewContainer(db)
+	c.BindAuth()
+
+	route.SetupAuthRoutes(app, c.AuthHandler)
+
 	app.Use(middleware.JWT())
-	app.Use(middleware.RolePermission([]string{"admin", "superuser"}))
+	// app.Use(middleware.RolePermission([]string{"admin", "superuser"}))
 
 	// Create a new container instance with the database connection
-	c := container.NewContainer(db)
 
 	// Bind dependencies in the container
 	c.BindUser()
 	c.BindRole()
-	c.BindAuth()
 	c.BindProduct()
 	c.BindCategory()
 	c.BindBasket()
@@ -75,7 +78,6 @@ func NewApp() (*fiber.App, error) {
 	// Setup routes
 	route.SetupUserRoutes(app, c.UserHandler)
 	route.SetupRoleRoutes(app, c.RoleHandler)
-	route.SetupAuthRoutes(app, c.AuthHandler)
 	route.SetupProductRoutes(app, c.ProductHandler)
 	route.SetupCategoryRoutes(app, c.CategoryHandler)
 	route.SetupBasketRoutes(app, c.BasketHandler)

@@ -28,14 +28,28 @@ func NewUserHandler(userService service.UserService) UserHandler {
 }
 
 func (h *userHandler) GetUsers(c *fiber.Ctx) error {
-	users, err := h.userService.GetUsers()
+	page, perPage, err := validateQueryParams(c, "page", "per_page", 1, 10)
 	if err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusBadRequest, "Invalid page number or per_page value")
 	}
 
-	return c.JSON(users)
+	users, total, err := h.userService.GetUsers(page, perPage)
+	if err != nil {
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching users")
+	}
+
+	return h.respondWithUsers(c, users, page, perPage, total)
 }
+
+func (h *userHandler) respondWithUsers(c *fiber.Ctx, users []*entity.User, page, perPage, total int) error {
+	var usersInterfaceSlice []interface{}
+	for _, user := range users {
+		usersInterfaceSlice = append(usersInterfaceSlice, user)
+	}
+
+	return createPaginatedResponse(c, fiber.StatusOK, "OK", usersInterfaceSlice, page, perPage, total)
+}
+
 
 func (h *userHandler) GetUserByID(c *fiber.Ctx) error {
 	id := c.Params("id")

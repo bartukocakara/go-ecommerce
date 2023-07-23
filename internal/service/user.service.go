@@ -6,7 +6,7 @@ import (
 )
 
 type UserService interface {
-	GetUsers() ([]entity.User, error)
+	GetUsers(offset, limit int) ([]*entity.User, int, error)
 	GetUserByID(id uint) (*entity.User, error)
 	CreateUser(user *entity.User) error
 	UpdateUser(user *entity.User) error
@@ -23,14 +23,9 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) GetUsers() ([]entity.User, error) {
-	users, err := s.userRepository.GetUsers()
-	if err != nil {
-		// Handle error
-		return nil, err
-	}
+func (s *userService) GetUsers(offset, limit int) ([]*entity.User, int, error) {
+	return s.userRepository.GetUsers(offset, limit)
 
-	return users, nil
 }
 
 func (s *userService) GetUserByID(id uint) (*entity.User, error) {

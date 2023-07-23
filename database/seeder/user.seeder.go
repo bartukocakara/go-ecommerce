@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bxcodec/faker/v3"
 	"gorm.io/gorm"
 )
 
@@ -18,24 +19,21 @@ func NewUserSeeder(db *gorm.DB) *UserSeeder {
 
 func (s *UserSeeder) Run() {
 	// Implement your user seeder logic here
-	users := []entity.User{
-		{
-			FirstName: "John",
-			LastName:  "Doe",
-			Password:  "password1",
-			Email:     "john@example.com",
+	var users []entity.User
+
+	for i := 0; i < 100; i++ {
+		firstName := faker.FirstName()
+		lastName := faker.LastName()
+
+		user := entity.User{
+			FirstName: firstName,
+			LastName:  lastName,
+			Password:  "password",
+			Email:     fmt.Sprintf("%s.%s@example.com", firstName, lastName),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
-		},
-		{
-			FirstName: "Jane",
-			LastName:  "Smith",
-			Password:  "password2",
-			Email:     "jane@example.com",
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		// Add more users as needed
+		}
+		users = append(users, user)
 	}
 
 	for _, user := range users {
@@ -45,5 +43,5 @@ func (s *UserSeeder) Run() {
 			return
 		}
 	}
-	fmt.Println("Running user seeder...")
+	fmt.Printf("Successfully seeded %d users\n", 100)
 }

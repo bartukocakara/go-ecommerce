@@ -7,7 +7,8 @@ import (
 )
 
 func SetupAuthRoutes(app *fiber.App, handler handler.AuthHandler) {
-	app.Post("/register", handler.Register)
-	app.Post("/login", handler.Login)
-	app.Post("/auth/forget-password", handler.ForgetPassword)
+	authGroup := app.Group("/auth")
+	authGroup.Post("/register", handler.Register)
+	authGroup.Post("/login", handler.Login)
+	authGroup.Post("/auth/forget-password", handler.ForgetPassword)
 }
