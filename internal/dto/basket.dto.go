@@ -1,9 +1,9 @@
 package dto
 
 type CreateBasketDto struct {
-	Name string `json:"name"`
+	TotalPrice float64 `json:"total_price"`
 }
 
 type UpdateBasketDto struct {
-	Name string `json:"name"`
+	TotalPrice float64 `json:"total_price"`
 }

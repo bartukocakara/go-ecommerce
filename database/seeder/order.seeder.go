@@ -18,8 +18,8 @@ func NewOrderSeeder(db *gorm.DB) *OrderSeeder {
 
 func (s *OrderSeeder) Run() {
 	order := []entity.Order{
-		{Name: "Order 1", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		{Name: "Order 2", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Code: "Order 1", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Code: "Order 2", CreatedAt: time.Now(), UpdatedAt: time.Now()},
 		// Add more Order data as needed
 	}
 

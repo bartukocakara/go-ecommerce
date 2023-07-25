@@ -31,8 +31,8 @@ func (r *orderRepository) GetOrders(offset, limit int, filterDto *dto.FilterOrde
 	query := r.db.Model(&entity.Order{})
 
 	if filterDto != nil {
-		if filterDto.Name != "" {
-			query = query.Where("name LIKE ?", "%"+filterDto.Name+"%")
+		if filterDto.Code != "" {
+			query = query.Where("code LIKE ?", "%"+filterDto.Code+"%")
 		}
 	}
 

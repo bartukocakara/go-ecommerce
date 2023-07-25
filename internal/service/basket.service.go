@@ -34,7 +34,7 @@ func (s *basketService) GetBasketByID(id uint) (*entity.Basket, error) {
 
 func (s *basketService) CreateBasket(createDto *dto.CreateBasketDto) (*entity.Basket, error) {
 	basket := &entity.Basket{
-		Name: createDto.Name,
+		TotalPrice: createDto.TotalPrice,
 	}
 
 	err := s.basketRepository.CreateBasket(basket)
@@ -51,7 +51,7 @@ func (s *basketService) UpdateBasket(id uint, updateDto *dto.UpdateBasketDto) (*
 		return nil, err
 	}
 
-	Basket.Name = updateDto.Name
+	Basket.TotalPrice = updateDto.TotalPrice
 
 	err = s.basketRepository.UpdateBasket(Basket)
 	if err != nil {

@@ -38,10 +38,6 @@ func (h *userHandler) GetUsers(c *fiber.Ctx) error {
 		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching users")
 	}
 
-	return h.respondWithUsers(c, users, page, perPage, total)
-}
-
-func (h *userHandler) respondWithUsers(c *fiber.Ctx, users []*entity.User, page, perPage, total int) error {
 	var usersInterfaceSlice []interface{}
 	for _, user := range users {
 		usersInterfaceSlice = append(usersInterfaceSlice, user)
