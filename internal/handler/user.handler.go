@@ -4,6 +4,7 @@ import (
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
 	"ecommerce/internal/service"
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -33,7 +34,14 @@ func (h *userHandler) GetUsers(c *fiber.Ctx) error {
 		return createErrorResponse(c, fiber.StatusBadRequest, "Invalid page number or per_page value")
 	}
 
-	users, total, err := h.userService.GetUsers(page, perPage)
+	// Parse and extract filter parameters from the request query
+	filter := &dto.FilterUserDTO{
+		FirstName: c.Query("first_name", ""),
+		LastName:  c.Query("last_name", ""),
+		Email:     c.Query("email", ""),
+	}
+	fmt.Print(filter)
+	users, total, err := h.userService.GetUsers(page, perPage, filter)
 	if err != nil {
 		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching users")
 	}
@@ -45,7 +53,6 @@ func (h *userHandler) GetUsers(c *fiber.Ctx) error {
 
 	return createPaginatedResponse(c, fiber.StatusOK, "OK", usersInterfaceSlice, page, perPage, total)
 }
-
 
 func (h *userHandler) GetUserByID(c *fiber.Ctx) error {
 	id := c.Params("id")

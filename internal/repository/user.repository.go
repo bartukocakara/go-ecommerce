@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
+	"fmt"
 
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	GetUsers(offset, limit int) ([]*entity.User, int, error)
+	GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
 	GetUserByID(id uint) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, error)
 	CreateUser(user *entity.User) error
@@ -25,19 +27,36 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) GetUsers(offset, limit int) ([]*entity.User, int, error) {
+func (r *userRepository) GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
+
 	var users []*entity.User
 	var total int64
 
-	// Count total number of users
-	if err := r.db.Model(&entity.User{}).Count(&total).Error; err != nil {
+	db := r.db.Model(&entity.User{})
+
+	// Apply filters based on provided parameters
+	if filter != nil {
+		if filter.FirstName != "" {
+			db = db.Where("first_name LIKE ?", "%"+filter.FirstName+"%")
+		}
+		if filter.LastName != "" {
+			db = db.Where("last_name LIKE ?", "%"+filter.LastName+"%")
+		}
+		if filter.Email != "" {
+			db = db.Where("email LIKE ?", "%"+filter.Email+"%")
+		}
+	}
+
+	// Count total number of users based on applied filters
+	if err := db.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	// Fetch users with pagination
-	if err := r.db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+	// Fetch users with pagination and applied filters
+	if err := db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
 		return nil, 0, err
 	}
+	fmt.Print(users)
 
 	return users, int(total), nil
 }
@@ -61,11 +80,11 @@ func (r *userRepository) GetUserByEmail(email string) (*entity.User, error) {
 }
 
 func (r *userRepository) CreateUser(user *entity.User) error {
-    result := r.db.Create(user)
-    if result.Error != nil {
-        return result.Error
-    }
-    return nil
+	result := r.db.Create(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 func (r *userRepository) UpdateUser(user *entity.User) error {

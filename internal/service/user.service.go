@@ -1,12 +1,13 @@
 package service
 
 import (
+	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
 	"ecommerce/internal/repository"
 )
 
 type UserService interface {
-	GetUsers(offset, limit int) ([]*entity.User, int, error)
+	GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
 	GetUserByID(id uint) (*entity.User, error)
 	CreateUser(user *entity.User) error
 	UpdateUser(user *entity.User) error
@@ -23,8 +24,8 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) GetUsers(offset, limit int) ([]*entity.User, int, error) {
-	return s.userRepository.GetUsers(offset, limit)
+func (s *userService) GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
+	return s.userRepository.GetUsers(offset, limit, filter)
 
 }
 

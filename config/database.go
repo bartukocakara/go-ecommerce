@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DatabaseConfig struct {
@@ -37,7 +38,9 @@ func NewDatabaseConnection() (*gorm.DB, error) {
 		db, _ = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	case "postgres":
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", config.Host, config.User, config.Password, config.Name, config.Port)
-		db, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		db, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
 	default:
 		return nil, fmt.Errorf("unsupported database driver: %s", config.Driver)
 	}
