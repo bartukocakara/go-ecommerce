@@ -37,7 +37,7 @@ func NewDatabaseConnection() (*gorm.DB, error) {
 		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.User, config.Password, config.Host, config.Port, config.Name)
 		db, _ = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	case "postgres":
-		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", config.Host, config.User, config.Password, config.Name, config.Port)
+		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Paris", config.Host, config.User, config.Password, config.Name, config.Port)
 		db, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		})

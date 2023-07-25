@@ -3,7 +3,6 @@ package repository
 import (
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -28,38 +27,37 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 func (r *userRepository) GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
-
 	var users []*entity.User
-	var total int64
 
 	db := r.db.Model(&entity.User{})
 
-	// Apply filters based on provided parameters
 	if filter != nil {
 		if filter.FirstName != "" {
-			db = db.Where("first_name LIKE ?", "%"+filter.FirstName+"%")
+			db = db.Where("first_name ILIKE ?", "%"+filter.FirstName+"%")
 		}
 		if filter.LastName != "" {
-			db = db.Where("last_name LIKE ?", "%"+filter.LastName+"%")
+			db = db.Where("last_name ILIKE ?", "%"+filter.LastName+"%")
 		}
 		if filter.Email != "" {
-			db = db.Where("email LIKE ?", "%"+filter.Email+"%")
+			db = db.Where("email ILIKE ?", "%"+filter.Email+"%")
 		}
 	}
+	count, err := CountTotal(db, users)
+	if err != nil {
+		return nil, 0, err
+	}
+	db = Paginate(db, offset, limit)
 
-	// Count total number of users based on applied filters
-	if err := db.Count(&total).Error; err != nil {
+	if err := db.Find(&users).Error; err != nil {
 		return nil, 0, err
 	}
 
-	// Fetch users with pagination and applied filters
-	if err := db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
-		return nil, 0, err
-	}
-	fmt.Print(users)
-
-	return users, int(total), nil
+	return users, int(count), nil
 }
+
+
+
+
 
 func (r *userRepository) GetUserByID(id uint) (*entity.User, error) {
 	var user entity.User

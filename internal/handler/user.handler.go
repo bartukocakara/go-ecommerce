@@ -4,7 +4,6 @@ import (
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
 	"ecommerce/internal/service"
-	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -40,7 +39,6 @@ func (h *userHandler) GetUsers(c *fiber.Ctx) error {
 		LastName:  c.Query("last_name", ""),
 		Email:     c.Query("email", ""),
 	}
-	fmt.Print(filter)
 	users, total, err := h.userService.GetUsers(page, perPage, filter)
 	if err != nil {
 		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching users")
