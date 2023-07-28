@@ -55,10 +55,6 @@ func (r *userRepository) GetUsers(offset, limit int, filter *dto.FilterUserDTO) 
 	return users, int(count), nil
 }
 
-
-
-
-
 func (r *userRepository) GetUserByID(id uint) (*entity.User, error) {
 	var user entity.User
 	result := r.db.First(&user, id)
@@ -70,7 +66,7 @@ func (r *userRepository) GetUserByID(id uint) (*entity.User, error) {
 
 func (r *userRepository) GetUserByEmail(email string) (*entity.User, error) {
 	var user entity.User
-	result := r.db.Where("email = ?", email).First(&user)
+	result := r.db.Preload("Role").Where("email = ?", email).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -78,10 +74,22 @@ func (r *userRepository) GetUserByEmail(email string) (*entity.User, error) {
 }
 
 func (r *userRepository) CreateUser(user *entity.User) error {
+	// If the role ID is provided in the user entity, fetch the role from the database
+	if user.RoleID != 0 {
+		var role entity.Role
+		if err := r.db.First(&role, user.RoleID).Error; err != nil {
+			return err
+		}
+		// Set the role association on the user entity
+		user.Role = role
+	}
+
+	// Create the user record
 	result := r.db.Create(user)
 	if result.Error != nil {
 		return result.Error
 	}
+
 	return nil
 }
 

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"ecommerce/internal/dto"
+	"ecommerce/internal/handler/response"
 	"ecommerce/internal/service"
 	"fmt"
 
@@ -24,22 +25,14 @@ func (h *AuthHandler) Register(ctx *fiber.Ctx) error {
 		fmt.Println("Error parsing request body:", err)
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request")
 	}
-
 	// Call the corresponding service method to handle the registration logic
 	user, err := h.AuthService.Register(registerDto)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to register")
+		return createErrorResponse(ctx, fiber.StatusBadRequest, "Failed to register")
 	}
 
 	// Return the custom response
-	response := createResponse(fiber.StatusCreated, "OK", fiber.Map{
-		"user":         user.User,
-		"access_token": user.AccessToken, // Replace this with the actual access token
-		"token_type":   "bearer",
-		"expires_in":   3600,
-	})
-
-	return ctx.Status(fiber.StatusCreated).JSON(response)
+	return response.CreateRegistrationResponse(ctx, user)
 }
 
 func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
@@ -55,7 +48,7 @@ func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	// Return the custom response
-	response := createResponse(fiber.StatusCreated, "OK", fiber.Map{
+	response := CreateResponse(fiber.StatusCreated, "OK", fiber.Map{
 		"user":         loginResponse.User,
 		"access_token": loginResponse.AccessToken, // Replace this with the actual access token
 		"token_type":   "bearer",

@@ -1,0 +1,5 @@
+{
+    "required": ":field alanı zorunludur.",
+    "min": ":field en az :min karakter olmalıdır.",
+    "max": ":field en fazla :max karakter olmalıdır."
+}

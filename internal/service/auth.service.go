@@ -13,6 +13,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	RoleAdmin    = 1
+	RoleCustomer = 2
+)
+
 type AuthService struct {
 	UserRepository repository.UserRepository
 	// MailService    MailService
@@ -25,26 +30,27 @@ func NewAuthService(userRepository repository.UserRepository) *AuthService {
 }
 
 func (s *AuthService) Register(registerDto dto.RegisterDto) (*dto.RegistrationResponse, error) {
-    // Hash the password
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerDto.Password), bcrypt.DefaultCost)
-    if err != nil {
-        return nil, err
-    }
-    // Create a new user entity
-    user := &entity.User{
-        FirstName: registerDto.FirstName,
-        LastName:  registerDto.LastName,
-        Email:     registerDto.Email,
-        Password:  string(hashedPassword),
-    }
-    // Save the user in the repository
-    err = s.UserRepository.CreateUser(user)
-    if err != nil {
-        return nil, err
-    }
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerDto.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	// Create a new user entity
+	user := &entity.User{
+		FirstName: registerDto.FirstName,
+		LastName:  registerDto.LastName,
+		Email:     registerDto.Email,
+		RoleID:    RoleCustomer,
+		Password:  string(hashedPassword),
+	}
+	// Save the user in the repository
+	err = s.UserRepository.CreateUser(user)
+	if err != nil {
+		return nil, err
+	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": registerDto.Email,
+		"email":   registerDto.Email,
 		"user_id": user.ID,
 	})
 
@@ -55,7 +61,8 @@ func (s *AuthService) Register(registerDto dto.RegisterDto) (*dto.RegistrationRe
 	}
 
 	response := &dto.RegistrationResponse{
-		User:       registerDto,
+		User:        registerDto,
+		Role:        user.Role.Name,
 		AccessToken: tokenString,
 	}
 
@@ -77,8 +84,9 @@ func (s *AuthService) Login(loginDto dto.LoginDto) (*dto.LoginResponse, error) {
 
 	// Generate a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": user.Email,
+		"email":   user.Email,
 		"user_id": user.ID,
+		"role":    user.Role.Name,
 		// Add more claims as needed
 	})
 
@@ -90,7 +98,7 @@ func (s *AuthService) Login(loginDto dto.LoginDto) (*dto.LoginResponse, error) {
 	}
 
 	response := &dto.LoginResponse{
-		User:       *user,
+		User:        *user,
 		AccessToken: tokenString,
 	}
 

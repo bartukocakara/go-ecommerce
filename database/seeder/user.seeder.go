@@ -30,6 +30,7 @@ func (s *UserSeeder) Run() {
 			LastName:  lastName,
 			Password:  "password",
 			Email:     fmt.Sprintf("%s.%s@example.com", firstName, lastName),
+			RoleID:    1,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}

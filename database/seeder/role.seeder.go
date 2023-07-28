@@ -21,7 +21,7 @@ func (s *RoleSeeder) Run() {
 	roles := []entity.Role{
 		{Name: "Admin"},
 		{Name: "User"},
-		{Name: "Manager"},
+		{Name: "Customer"},
 	}
 
 	for _, role := range roles {

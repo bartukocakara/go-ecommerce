@@ -1,17 +1,5 @@
 package utils
 
-// GenericResponse represents the full response data structure for generic responses
-type GenericResponse struct {
-	Message   string      `json:"message"`
-	StatusCode int        `json:"status_code"`
-	Status     string     `json:"status"`
-	Result     struct {
-		Data     interface{} `json:"data"`
-		Pagination Pagination `json:"pagination"`
-		Role      interface{} `json:"role"` // Assuming it can be null, so use interface{}
-	} `json:"result"`
-}
-
 type Pagination struct {
 	CurrentPage int `json:"current_page"`
 	From        int `json:"from"`
@@ -50,7 +38,7 @@ type PaginationLink struct {
 
 // GenericResult represents the result data structure for generic responses
 type GenericResult struct {
-	Data       interface{}   `json:"data"`
-	Pagination Pagination    `json:"pagination"`
-	Role       interface{}   `json:"role"` // Assuming it can be null, so use interface{}
+	Data       interface{} `json:"data"`
+	Pagination Pagination  `json:"pagination"`
+	Role       interface{} `json:"role"` // Assuming it can be null, so use interface{}
 }
