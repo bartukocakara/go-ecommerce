@@ -26,11 +26,12 @@ func JWT() fiber.Handler {
 
 		// Set the authenticated user ID in the context
 		claims := token.Claims.(jwt.MapClaims)
-		userID := claims["user_id"].(float64)
+		userIDFloat := claims["user_id"].(float64) // assert as float64 first
+		userID := uint(userIDFloat)                // convert to uint
 		email := claims["email"].(string)
 		c.Locals("user_id", userID)
-		userRole := claims["role"].(string) // Replace "role" with the actual key in the claims
-		c.Locals("userRole", userRole)
+		// userRole := claims["role"].(string) // Replace "role" with the actual key in the claims
+		// c.Locals("userRole", userRole)
 		c.Locals("email", email)
 
 		// Continue to the next middleware or route handler

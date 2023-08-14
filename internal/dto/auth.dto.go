@@ -1,17 +1,14 @@
 package dto
 
-import (
-	"ecommerce/internal/entity"
-)
-
 type LoginDto struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type LoginResponse struct {
-	User        entity.User `json:"user"`
-	AccessToken string      `json:"access_token"`
+	User        UserDTO `json:"user"`
+	Role        string  `json:"role"`
+	AccessToken string  `json:"access_token"`
 }
 
 type RegisterDto struct {
@@ -22,11 +19,11 @@ type RegisterDto struct {
 }
 
 type RegistrationResponse struct {
-	User        RegisterDto `json:"user"`
-	Role        string      `json:"role"`
-	AccessToken string      `json:"access_token"`
+	User        UserDTO `json:"user"`
+	Role        string  `json:"role"`
+	AccessToken string  `json:"access_token"`
 }
 
-type ForgetPasswordDto struct {
+type ForgotPasswordDto struct {
 	Email string `json:"email"`
 }

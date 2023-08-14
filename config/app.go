@@ -73,13 +73,11 @@ func NewApp() (*fiber.App, error) {
 	route.SetupAuthRoutes(app, c.AuthHandler)
 
 	app.Use(middleware.JWT())
-	// app.Use(middleware.RolePermission([]string{"admin", "superuser"}))
-
-	// Create a new container instance with the database connection
 
 	// Bind dependencies in the container
 	c.BindUser()
 	c.BindRole()
+	c.BindForgotPasswordToken()
 	c.BindProduct()
 	c.BindCategory()
 	c.BindBasket()
@@ -87,7 +85,7 @@ func NewApp() (*fiber.App, error) {
 	c.BindOrder()
 
 	// Setup routes
-	route.SetupUserRoutes(app, c.UserHandler)
+	route.SetupUserRoutes(app, c.UserHandler, db)
 	route.SetupRoleRoutes(app, c.RoleHandler)
 	route.SetupProductRoutes(app, c.ProductHandler)
 	route.SetupCategoryRoutes(app, c.CategoryHandler)
@@ -97,9 +95,6 @@ func NewApp() (*fiber.App, error) {
 
 	commands(db)
 
-	// Rest of the code...
-
-	// Close the database connection when the application exits
 	app.Shutdown()
 
 	return app, nil
@@ -238,12 +233,14 @@ func runMigrations(db *gorm.DB) {
 	rolePermissionMigration := migration.NewRolePermissionMigration(db)
 	productMigration := migration.NewProductMigration(db)
 	categoryMigration := migration.NewCategoryMigration(db)
+	forgotPasswordTokenMigration := migration.NewForgotPasswordTokenMigration(db)
 	userMigration.Migrate()
 	roleMigration.Migrate()
 	permissionMigration.Migrate()
 	rolePermissionMigration.Migrate()
 	productMigration.Migrate()
 	categoryMigration.Migrate()
+	forgotPasswordTokenMigration.Migrate()
 
 	fmt.Println("Running migrations...")
 }

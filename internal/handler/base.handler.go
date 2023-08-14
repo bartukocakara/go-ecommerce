@@ -52,6 +52,21 @@ func CreateResponse(statusCode int, message string, data fiber.Map) fiber.Map {
 	}
 }
 
+func CreateTokenResponse(statusCode int, message string, data map[string]interface{}) fiber.Map {
+	return fiber.Map{
+		"message":    message,
+		"statusCode": statusCode,
+		"status":     getStatusText(statusCode),
+		"result": fiber.Map{
+			"user":         data["user"],
+			"role":         data["role"],
+			"access_token": data["access_token"],
+			"token_type":   "Bearer",
+			"expires_in":   3600,
+		},
+	}
+}
+
 func getStatusText(code int) string {
 	switch code {
 	case fiber.StatusOK:

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
+	"ecommerce/internal/enums"
 	"ecommerce/internal/repository"
 	"encoding/base64"
 	"fmt"
@@ -19,13 +20,16 @@ const (
 )
 
 type AuthService struct {
-	UserRepository repository.UserRepository
+	UserRepository                repository.UserRepository
+	ForgotPasswordTokenRepository repository.ForgotPasswordTokenRepository
 	// MailService    MailService
 }
 
-func NewAuthService(userRepository repository.UserRepository) *AuthService {
+func NewAuthService(userRepository repository.UserRepository,
+	forgotPasswordTokenRepository repository.ForgotPasswordTokenRepository) *AuthService {
 	return &AuthService{
-		UserRepository: userRepository,
+		UserRepository:                userRepository,
+		ForgotPasswordTokenRepository: forgotPasswordTokenRepository,
 	}
 }
 
@@ -52,6 +56,7 @@ func (s *AuthService) Register(registerDto dto.RegisterDto) (*dto.RegistrationRe
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":   registerDto.Email,
 		"user_id": user.ID,
+		"role":    user.Role.Name,
 	})
 
 	// Sign the token with a secret key (replace "your-secret-key" with your actual secret key)
@@ -61,7 +66,11 @@ func (s *AuthService) Register(registerDto dto.RegisterDto) (*dto.RegistrationRe
 	}
 
 	response := &dto.RegistrationResponse{
-		User:        registerDto,
+		User: dto.UserDTO{
+			ID:        user.ID,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email},
 		Role:        user.Role.Name,
 		AccessToken: tokenString,
 	}
@@ -98,24 +107,47 @@ func (s *AuthService) Login(loginDto dto.LoginDto) (*dto.LoginResponse, error) {
 	}
 
 	response := &dto.LoginResponse{
-		User:        *user,
+		User: dto.UserDTO{
+			ID:        user.ID,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email},
+		Role: user.Role.Name,
+
 		AccessToken: tokenString,
 	}
 
 	return response, nil
 }
 
-func (s *AuthService) ForgetPassword(forgetPasswordDto dto.ForgetPasswordDto) (string, error) {
+func (s *AuthService) ForgotPassword(forgotPasswordDto dto.ForgotPasswordDto) (string, enums.ForgotPasswordResult, error) {
 	// Check if the user exists in the database
-	user, err := s.UserRepository.GetUserByEmail(forgetPasswordDto.Email)
+	user, err := s.UserRepository.GetUserByEmail(forgotPasswordDto.Email)
 	if err != nil {
-		return "", err
+		return "User not found", enums.UserNotFound, err
 	}
-
+	fmt.Print(user)
+	// Get forgot password by user id
+	tokenFound, err := s.ForgotPasswordTokenRepository.GetByUserId(user.ID)
+	if tokenFound != nil {
+		return "Token already exist. Expiring time is 1 day", enums.TokenAlreadyExists, nil
+	}
 	// Generate a password reset token for the user
 	resetToken, err := GeneratePasswordResetToken(user.ID)
 	if err != nil {
-		return "", err
+		return "", enums.TokenCouldntGenerated, nil
+	}
+	expiresAt := time.Now().Add(24 * time.Hour)
+
+	var forgotPasswordData = entity.ForgotPasswordToken{
+		UserID:    user.ID,
+		Token:     resetToken,
+		ExpiresAt: expiresAt, // Set the calculated expiration time
+	}
+
+	data := s.ForgotPasswordTokenRepository.CreateToken(&forgotPasswordData)
+	if data != nil {
+		return "Token created successfully", enums.Success, nil
 	}
 
 	// Send the password reset email to the user
@@ -124,7 +156,7 @@ func (s *AuthService) ForgetPassword(forgetPasswordDto dto.ForgetPasswordDto) (s
 	// 	return err
 	// }
 
-	return resetToken, nil
+	return resetToken, enums.Success, nil
 }
 
 func GeneratePasswordResetToken(userID uint) (string, error) {

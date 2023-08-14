@@ -2,7 +2,7 @@ package handler
 
 import (
 	"ecommerce/internal/dto"
-	"ecommerce/internal/handler/response"
+	"ecommerce/internal/enums"
 	"ecommerce/internal/service"
 	"fmt"
 
@@ -26,13 +26,19 @@ func (h *AuthHandler) Register(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request")
 	}
 	// Call the corresponding service method to handle the registration logic
-	user, err := h.AuthService.Register(registerDto)
+	registerResponse, err := h.AuthService.Register(registerDto)
 	if err != nil {
 		return createErrorResponse(ctx, fiber.StatusBadRequest, "Failed to register")
 	}
 
 	// Return the custom response
-	return response.CreateRegistrationResponse(ctx, user)
+	response := CreateTokenResponse(fiber.StatusCreated, "OK", map[string]interface{}{
+		"user":         registerResponse.User,
+		"role":         registerResponse.Role,
+		"access_token": registerResponse.AccessToken,
+	})
+
+	return ctx.Status(fiber.StatusCreated).JSON(response)
 }
 
 func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
@@ -48,36 +54,41 @@ func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	// Return the custom response
-	response := CreateResponse(fiber.StatusCreated, "OK", fiber.Map{
+	response := CreateTokenResponse(fiber.StatusOK, "OK", map[string]interface{}{
 		"user":         loginResponse.User,
-		"access_token": loginResponse.AccessToken, // Replace this with the actual access token
-		"token_type":   "bearer",
-		"expires_in":   3600,
+		"role":         loginResponse.Role,
+		"access_token": loginResponse.AccessToken,
 	})
 
-	return ctx.Status(fiber.StatusCreated).JSON(response)
+	return ctx.Status(fiber.StatusOK).JSON(response)
 }
 
-func (h *AuthHandler) ForgetPassword(c *fiber.Ctx) error {
-	// Parse the request body into a DTO
-	var forgetPasswordDto dto.ForgetPasswordDto
-	if err := c.BodyParser(&forgetPasswordDto); err != nil {
+func (h *AuthHandler) ForgotPassword(ctx *fiber.Ctx) error {
+	var forgotPasswordDto dto.ForgotPasswordDto
+	if err := ctx.BodyParser(&forgotPasswordDto); err != nil {
 		return err
 	}
 
-	// Call the service method
-	resetToken, err := h.AuthService.ForgetPassword(forgetPasswordDto)
+	response, result, err := h.AuthService.ForgotPassword(forgotPasswordDto)
 
 	if err != nil {
-		// Handle the error and return an appropriate response
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to process forget password request",
-			"error":   err.Error(),
-		})
+		return createErrorResponse(ctx, fiber.StatusInternalServerError, "Failed to process forget password request")
 	}
 
-	return c.JSON(fiber.Map{
-		"token":   resetToken,
-		"message": "Forget password request processed successfully",
-	})
+	// Handle different resulting cases
+	switch result {
+	case enums.UserNotFound:
+		return createErrorResponse(ctx, fiber.StatusNotFound, response)
+
+	case enums.TokenAlreadyExists:
+		response := CreateResponse(fiber.StatusBadRequest, response, fiber.Map{})
+		return ctx.Status(fiber.StatusBadRequest).JSON(response)
+
+	case enums.Success:
+		response := CreateResponse(fiber.StatusCreated, response, fiber.Map{})
+		return ctx.Status(fiber.StatusCreated).JSON(response)
+	default:
+		return createErrorResponse(ctx, fiber.StatusBadRequest, "Unknown error occurred")
+	}
+
 }

@@ -11,5 +11,5 @@ func SetupAuthRoutes(app *fiber.App, handler handler.AuthHandler) {
 	authGroup := app.Group("/auth")
 	authGroup.Post("/register", validator.RegisterValidator, handler.Register)
 	authGroup.Post("/login", handler.Login)
-	authGroup.Post("/auth/forget-password", handler.ForgetPassword)
+	authGroup.Post("/forgot-password", handler.ForgotPassword)
 }

@@ -8,6 +8,7 @@ import (
 
 func (c *Container) BindAuth() {
 	c.UserRepository = repository.NewUserRepository(c.DB)
-	c.AuthService = *service.NewAuthService(c.UserRepository)
+	c.ForgotPasswordRepository = repository.NewForgotPasswordTokenRepository(c.DB)
+	c.AuthService = *service.NewAuthService(c.UserRepository, c.ForgotPasswordRepository)
 	c.AuthHandler = *handler.NewAuthHandler(c.AuthService)
 }

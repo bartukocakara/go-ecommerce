@@ -11,6 +11,7 @@ type UserRepository interface {
 	GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
 	GetUserByID(id uint) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, error)
+	GetUserRoleNameByID(userID uint) (string, error)
 	CreateUser(user *entity.User) error
 	UpdateUser(user *entity.User) error
 	DeleteUser(user *entity.User) error
@@ -71,6 +72,17 @@ func (r *userRepository) GetUserByEmail(email string) (*entity.User, error) {
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+func (r *userRepository) GetUserRoleNameByID(userID uint) (string, error) {
+	var roleName string
+	if err := r.db.Model(&entity.User{}).
+		Select("roles.name").
+		Joins("JOIN roles ON users.role_id = roles.id").
+		Where("users.id = ?", userID).Scan(&roleName).Error; err != nil {
+		return "", err
+	}
+	return roleName, nil
 }
 
 func (r *userRepository) CreateUser(user *entity.User) error {
