@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func RolePermission(allowedRoles []string, userRepo repository.UserRepository) fiber.Handler {
+func RoleMiddleware(allowedRoles []string, userRepo repository.UserRepository) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Get the user's role from the context
 		// userRole := c.Locals("userRole").(string)

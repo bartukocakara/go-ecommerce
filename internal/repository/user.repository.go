@@ -12,6 +12,7 @@ type UserRepository interface {
 	GetUserByID(id uint) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, error)
 	GetUserRoleNameByID(userID uint) (string, error)
+	GetPermissionsByUserID(userID uint) ([]string, error)
 	CreateUser(user *entity.User) error
 	UpdateUser(user *entity.User) error
 	DeleteUser(user *entity.User) error
@@ -83,6 +84,20 @@ func (r *userRepository) GetUserRoleNameByID(userID uint) (string, error) {
 		return "", err
 	}
 	return roleName, nil
+}
+
+func (r *userRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
+	var permissions []string
+	if err := r.db.Model(&entity.User{}).
+		Select("permissions.name").
+		Joins("JOIN roles ON users.role_id = roles.id").
+		Joins("JOIN role_permissions ON roles.id = role_permissions.role_id").
+		Joins("JOIN permissions ON role_permissions.permission_id = permissions.id").
+		Where("users.id = ?", userID).
+		Pluck("permissions.name", &permissions).Error; err != nil {
+		return nil, err
+	}
+	return permissions, nil
 }
 
 func (r *userRepository) CreateUser(user *entity.User) error {

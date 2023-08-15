@@ -2,7 +2,6 @@ package handler
 
 import (
 	"ecommerce/internal/handler/response"
-	"ecommerce/internal/utils"
 	"ecommerce/internal/validation"
 	"fmt"
 	"math"
@@ -25,6 +24,15 @@ type OkResponse struct {
 	StatusCode int         `json:"statusCode"`
 	Status     string      `json:"status"`
 	Result     interface{} `json:"result"`
+}
+
+type Pagination struct {
+	CurrentPage int `json:"current_page"`
+	From        int `json:"from"`
+	LastPage    int `json:"last_page"`
+	PerPage     int `json:"per_page"`
+	To          int `json:"to"`
+	Total       int `json:"total"`
 }
 
 func createOkResponse(statusCode int, message string) fiber.Map {
@@ -91,7 +99,7 @@ func createPaginatedResponse(c *fiber.Ctx, statusCode int, message string, data 
 		return fmt.Errorf("invalid data type, expected []interface{}")
 	}
 
-	pagination := utils.Pagination{
+	pagination := Pagination{
 		CurrentPage: currentPage,
 		From:        (currentPage - 1) * perPage,
 		LastPage:    int(math.Ceil(float64(total) / float64(perPage))),

@@ -8,6 +8,10 @@ ASCII Treedir
 ```
 .
 ├── internal/
+│   ├── dto/
+│   │   └── auth.dto.go
+│   ├── enums/
+│   │   └── forgot-password.enum.go
 │   ├── repository/
 │   │   └── user.repository.go
 │   ├── service/
@@ -16,14 +20,19 @@ ASCII Treedir
 │   │   └── user.route.go
 │   ├── handler/
 │   │   └── user.handler.go
+│   ├── lib/
+│   │   └── mail.go
+│   ├── mail/
+│   │   └── welcome.mail.go
 │   ├── middleware/
 │   │   ├── jwt.middleware.go
-│   │   ├── role-permission.middleware.go
+│   │   ├── role.middleware.go
+│   │   ├── permission.middleware.go
 │   │   └── cors.middleware.go
 │   ├── seeder/
 │   │   └── user.seeder.go
 │   │   └── role.seeder.go
-│   └── migration/
+│   ├── migration/
 │   │   └── user.migration.go
 │   │   └── role.migration.go
 ├── container/
@@ -32,6 +41,11 @@ ASCII Treedir
 ├── config/
 │   ├── database.go
 │   └── app.go
+├── databse/
+│   ├── migration/
+│   │    └── user.migration.go
+│   ├── seeder/
+│   │    └── user.seeder.go
 ├── main.go
 └── .env
 ```
