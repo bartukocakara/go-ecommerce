@@ -8,38 +8,62 @@ import (
 
 type {{ .ModuleTitle }}Service interface {
 	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
-	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error)
-	Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
-	Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error
+	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
+	Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
 	Delete{{ .ModuleTitle }}(id uint) error
 }
 
-type {{ .ModuleVar }}Service struct {
-	{{ .ModuleVar }}Repository repository.{{ .ModuleTitle }}Repository
+type {{ .ModuleCamelTitle }}Service struct {
+	{{ .ModuleCamelTitle }}Repository repository.{{ .ModuleTitle }}Repository
 }
 
-func New{{ .ModuleTitle }}Service({{ .ModuleVar }}Repository repository.{{ .ModuleTitle }}Repository) {{ .ModuleTitle }}Service {
-	return &{{ .ModuleVar }}Service{
-		{{ .ModuleVar }}Repository: {{ .ModuleVar }}Repository,
+func New{{ .ModuleTitle }}Service({{ .ModuleCamelTitle }}Repository repository.{{ .ModuleTitle }}Repository) {{ .ModuleTitle }}Service {
+	return &{{ .ModuleCamelTitle }}Service{
+		{{ .ModuleCamelTitle }}Repository: {{ .ModuleCamelTitle }}Repository,
 	}
 }
 
-func (s *{{ .ModuleVar }}Service) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
-	return s.{{ .ModuleVar }}Repository.Get{{ .ModuleTitle }}ByID(id)
+func (s *{{ .ModuleCamelTitle }}Service) Get{{ .ModuleTitle }}s(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error) {
+	return s.{{ .ModuleCamelTitle }}Repository.Get{{ .ModuleTitle }}s(offset, limit, filter)
 }
 
-func (s *{{ .ModuleVar }}Service) Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}Dto) ([]entity.{{ .ModuleTitle }}, error) {
-	return s.{{ .ModuleVar }}Repository.Get{{ .ModuleTitle }}s(offset, limit, filterDto)
+func (s *{{ .ModuleCamelTitle }}Service) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
+	{{ .ModuleCamelTitle }}, err := s.{{ .ModuleCamelTitle }}Repository.Get{{ .ModuleTitle }}ByID(id)
+	if err != nil {
+		// Handle error
+		return nil, err
+	}
+
+	return {{ .ModuleCamelTitle }}, nil
 }
 
-func (s *{{ .ModuleVar }}Service) Create{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
-	return s.{{ .ModuleVar }}Repository.Create{{ .ModuleTitle }}({{ .ModuleVar }})
+func (s *{{ .ModuleCamelTitle }}Service) Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
+	if err != nil {
+		// Handle error
+		return err
+	}
+
+	return nil
 }
 
-func (s *{{ .ModuleVar }}Service) Update{{ .ModuleTitle }}({{ .ModuleVar }} *entity.{{ .ModuleTitle }}) error {
-	return s.{{ .ModuleVar }}Repository.Update{{ .ModuleTitle }}({{ .ModuleVar }})
+func (s *{{ .ModuleCamelTitle }}Service) Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
+	if err != nil {
+		// Handle error
+		return err
+	}
+
+	return nil
 }
 
-func (s *{{ .ModuleVar }}Service) Delete{{ .ModuleTitle }}(id uint) error {
-	return s.{{ .ModuleVar }}Repository.Delete{{ .ModuleTitle }}(id)
+func (s *{{ .ModuleCamelTitle }}Service) Delete{{ .ModuleTitle }}(id uint) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Delete{{ .ModuleTitle }}(id)
+	if err != nil {
+		// Handle error
+		return err
+	}
+
+	return nil
 }

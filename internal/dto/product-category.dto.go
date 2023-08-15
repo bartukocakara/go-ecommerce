@@ -1,22 +1,22 @@
 package dto
 
-type {{ .ModuleTitle }}DTO struct {
+type ProductCategoryDTO struct {
 	ID        uint   `json:"id"`
 	Name string `json:"name"`
 	// Add other filter fields as per your requirements
 }
 
-type Create{{ .ModuleTitle }}DTO struct {
+type CreateProductCategoryDTO struct {
 	Name string `json:"name"`
 	// Add other filter fields as per your requirements
 }
 
-type Filter{{ .ModuleTitle }}DTO struct {
+type FilterProductCategoryDTO struct {
 	Name string `json:"name"`
 	// Add other filter fields as per your requirements
 }
 
-type Update{{ .ModuleTitle }}DTO struct {
+type UpdateProductCategoryDTO struct {
 	Name string `json:"name"`
 	// Add other filter fields as per your requirements
 }

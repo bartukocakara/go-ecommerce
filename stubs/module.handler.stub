@@ -15,76 +15,88 @@ type {{ .ModuleTitle }}Handler interface {
 	Delete{{ .ModuleTitle }}(c *fiber.Ctx) error
 }
 
-type {{ .ModuleVar }}Handler struct {
-	{{ .ModuleVar }}Service service.{{ .ModuleTitle }}Service
+type {{ .ModuleCamelTitle }}Handler struct {
+	{{ .ModuleCamelTitle }}Service service.{{ .ModuleTitle }}Service
 }
 
-func New{{ .ModuleTitle }}Handler({{ .ModuleVar }}Service service.{{ .ModuleTitle }}Service) {{ .ModuleTitle }}Handler {
-	return &{{ .ModuleVar }}Handler{
-		{{ .ModuleVar }}Service: {{ .ModuleVar }}Service,
+func New{{ .ModuleTitle }}Handler({{ .ModuleCamelTitle }}Service service.{{ .ModuleTitle }}Service) {{ .ModuleTitle }}Handler {
+	return &{{ .ModuleCamelTitle }}Handler{
+		{{ .ModuleCamelTitle }}Service: {{ .ModuleCamelTitle }}Service,
 	}
 }
 
-func (h *{{ .ModuleVar }}Handler) Get{{ .ModuleTitle }}s(c *fiber.Ctx) error {
-	offset, limit := parsePaginationParams(c)
-	filterDto := parseFilterParams(c).(*dto.Filter{{ .ModuleTitle }}Dto)
-
-	{{ .ModuleVar }}s, err := h.{{ .ModuleVar }}Service.Get{{ .ModuleTitle }}s(offset, limit, filter{{ .ModuleTitle }}Dto)
+func (h *{{ .ModuleCamelTitle }}Handler) Get{{ .ModuleTitle }}s(c *fiber.Ctx) error {
+	page, perPage, err := validateQueryParams(c, "page", "per_page", 1, 10)
 	if err != nil {
-		return handleError(c, err)
+		return createErrorResponse(c, fiber.StatusBadRequest, "Invalid page number or per_page value")
 	}
 
-	return c.JSON({{ .ModuleVar }}s)
+	// Parse and extract filter parameters from the request query
+	filter := &dto.Filter{{ .ModuleTitle }}DTO{
+		Name: c.Query("name", ""),
+	}
+
+	{{ .ModuleCamelTitle }}s, total, err := h.{{ .ModuleCamelTitle }}Service.Get{{ .ModuleTitle }}s(page, perPage, filter)
+	if err != nil {
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching {{ .ModuleVar }}s")
+	}
+
+	var {{ .ModuleCamelTitle }}sInterfaceSlice []interface{}
+	for _, {{ .ModuleCamelTitle }} := range {{ .ModuleCamelTitle }}s {
+		{{ .ModuleCamelTitle }}sInterfaceSlice = append({{ .ModuleCamelTitle }}sInterfaceSlice, {{ .ModuleCamelTitle }})
+	}
+
+	return createPaginatedResponse(c, fiber.StatusOK, "OK", {{ .ModuleCamelTitle }}sInterfaceSlice, page, perPage, total)
 }
 
-func (h *{{ .ModuleVar }}Handler) Get{{ .ModuleTitle }}ByID(c *fiber.Ctx) error {
+func (h *{{ .ModuleCamelTitle }}Handler) Get{{ .ModuleTitle }}ByID(c *fiber.Ctx) error {
 	id := parseIDParam(c)
 
-	{{ .ModuleVar }}, err := h.{{ .ModuleVar }}Service.Get{{ .ModuleTitle }}ByID(id)
+	{{ .ModuleCamelTitle }}, err := h.{{ .ModuleCamelTitle }}Service.Get{{ .ModuleTitle }}ByID(id)
 	if err != nil {
 		return handleError(c, err)
 	}
 
-	return c.JSON({{ .ModuleVar }})
+	return c.JSON({{ .ModuleCamelTitle }})
 }
 
-func (h *{{ .ModuleVar }}Handler) Create{{ .ModuleTitle }}(c *fiber.Ctx) error {
-	{{ .ModuleVar }} := new(entity.{{ .ModuleTitle }})
+func (h *{{ .ModuleCamelTitle }}Handler) Create{{ .ModuleTitle }}(c *fiber.Ctx) error {
+	{{ .ModuleCamelTitle }} := new(entity.{{ .ModuleTitle }})
 
-	if err := parseBody(c, {{ .ModuleVar }}); err != nil {
+	if err := parseBody(c, {{ .ModuleCamelTitle }}); err != nil {
 		return handleError(c, err)
 	}
 
-	err := h.{{ .ModuleVar }}Service.Create{{ .ModuleTitle }}({{ .ModuleVar }})
+	err := h.{{ .ModuleCamelTitle }}Service.Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
 	if err != nil {
 		return handleError(c, err)
 	}
 
-	return c.JSON({{ .ModuleVar }})
+	return c.JSON({{ .ModuleCamelTitle }})
 }
 
-func (h *{{ .ModuleVar }}Handler) Update{{ .ModuleTitle }}(c *fiber.Ctx) error {
+func (h *{{ .ModuleCamelTitle }}Handler) Update{{ .ModuleTitle }}(c *fiber.Ctx) error {
 	id := parseIDParam(c)
-	{{ .ModuleVar }} := new(entity.{{ .ModuleTitle }})
+	{{ .ModuleCamelTitle }} := new(entity.{{ .ModuleTitle }})
 
-	if err := parseBody(c, {{ .ModuleVar }}); err != nil {
+	if err := parseBody(c, {{ .ModuleCamelTitle }}); err != nil {
 		return handleError(c, err)
 	}
 
-	{{ .ModuleVar }}.ID = id
+	{{ .ModuleCamelTitle }}.ID = id
 
-	err := h.{{ .ModuleVar }}Service.Update{{ .ModuleTitle }}({{ .ModuleVar }})
+	err := h.{{ .ModuleCamelTitle }}Service.Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
 	if err != nil {
 		return handleError(c, err)
 	}
 
-	return c.JSON({{ .ModuleVar }})
+	return c.JSON({{ .ModuleCamelTitle }})
 }
 
-func (h *{{ .ModuleVar }}Handler) Delete{{ .ModuleTitle }}(c *fiber.Ctx) error {
+func (h *{{ .ModuleCamelTitle }}Handler) Delete{{ .ModuleTitle }}(c *fiber.Ctx) error {
 	id := parseIDParam(c)
 
-	err := h.{{ .ModuleVar }}Service.Delete{{ .ModuleTitle }}(id)
+	err := h.{{ .ModuleCamelTitle }}Service.Delete{{ .ModuleTitle }}(id)
 	if err != nil {
 		return handleError(c, err)
 	}

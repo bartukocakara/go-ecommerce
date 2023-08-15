@@ -6,12 +6,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Setup{{ .ModuleTitle }}Routes(app *fiber.App, {{ .ModuleVar }}Handler handler.{{ .ModuleTitle }}Handler) {
+func Setup{{ .ModuleTitle }}Routes(app *fiber.App, {{ .ModuleCamelTitle }}Handler handler.{{ .ModuleTitle }}Handler) {
 	route := app.Group("/{{ .ModuleVar }}")
 
-	route.Get("/", {{ .ModuleVar }}Handler.Get{{ .ModuleTitle }}s)
-	route.Get("/:id", {{ .ModuleVar }}Handler.Get{{ .ModuleTitle }}ByID)
-	route.Post("/", {{ .ModuleVar }}Handler.Create{{ .ModuleTitle }})
-	route.Put("/:id", {{ .ModuleVar }}Handler.Update{{ .ModuleTitle }})
-	route.Delete("/:id", {{ .ModuleVar }}Handler.Delete{{ .ModuleTitle }})
+	route.Get("/", {{ .ModuleCamelTitle }}Handler.Get{{ .ModuleTitle }}s)
+	route.Get("/:id", {{ .ModuleCamelTitle }}Handler.Get{{ .ModuleTitle }}ByID)
+	route.Post("/", {{ .ModuleCamelTitle }}Handler.Create{{ .ModuleTitle }})
+	route.Put("/:id", {{ .ModuleCamelTitle }}Handler.Update{{ .ModuleTitle }})
+	route.Delete("/:id", {{ .ModuleCamelTitle }}Handler.Delete{{ .ModuleTitle }})
 }

@@ -134,8 +134,9 @@ func commands(db *gorm.DB) {
 }
 
 type StubData struct {
-	ModuleVar   string
-	ModuleTitle string
+	ModuleVar        string
+	ModuleTitle      string
+	ModuleCamelTitle string
 }
 
 func loadTemplateContent(filePath string) (string, error) {
@@ -276,19 +277,19 @@ func generateFiles(moduleName string, templates *stubTemplates) {
 	fmt.Println("Generating files for", moduleName)
 
 	// Convert the module name to title case
-	moduleTitle := strings.Title(moduleName)
+	titleCase, camelCase := toTitleCaseWithSpecialChars(moduleName)
 
 	// Define the file names and content for the module
 	files := map[string]string{
-		fmt.Sprintf("internal/handler/%s.handler.go", moduleName):       generateContent(templates.Handler, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("internal/repository/%s.repository.go", moduleName): generateContent(templates.Repository, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("internal/service/%s.service.go", moduleName):       generateContent(templates.Service, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("internal/route/%s.route.go", moduleName):           generateContent(templates.Route, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("internal/entity/%s.entity.go", moduleName):         generateContent(templates.Entity, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("internal/dto/%s.dto.go", moduleName):               generateContent(templates.Dto, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("container/%s.container.go", moduleName):            generateContent(templates.Container, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("database/seeder/%s.seeder.go", moduleName):         generateContent(templates.Seeder, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
-		fmt.Sprintf("database/migration/%s.migration.go", moduleName):   generateContent(templates.Migration, StubData{ModuleVar: moduleName, ModuleTitle: moduleTitle}),
+		fmt.Sprintf("internal/handler/%s.handler.go", moduleName):       generateContent(templates.Handler, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("internal/repository/%s.repository.go", moduleName): generateContent(templates.Repository, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("internal/service/%s.service.go", moduleName):       generateContent(templates.Service, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("internal/route/%s.route.go", moduleName):           generateContent(templates.Route, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("internal/entity/%s.entity.go", moduleName):         generateContent(templates.Entity, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("internal/dto/%s.dto.go", moduleName):               generateContent(templates.Dto, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("container/%s.container.go", moduleName):            generateContent(templates.Container, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("database/seeder/%s.seeder.go", moduleName):         generateContent(templates.Seeder, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
+		fmt.Sprintf("database/migration/%s.migration.go", moduleName):   generateContent(templates.Migration, StubData{ModuleVar: moduleName, ModuleTitle: titleCase, ModuleCamelTitle: camelCase}),
 	}
 
 	// Generate the files
@@ -317,6 +318,23 @@ func generateContent(templateContent string, data StubData) string {
 	}
 
 	return buf.String()
+}
+
+func toTitleCaseWithSpecialChars(input string) (string, string) {
+	var titleCase string
+	var camelCase string
+
+	words := strings.Fields(strings.ReplaceAll(input, "-", " "))
+	for index, word := range words {
+		if index == 0 {
+			camelCase += strings.ToLower(word)
+		} else {
+			camelCase += strings.Title(word)
+		}
+		titleCase += strings.Title(word)
+	}
+
+	return titleCase, camelCase
 }
 
 func NewValidator() *validator.Validate {

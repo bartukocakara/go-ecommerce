@@ -26,7 +26,6 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 
 func (s *userService) GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
 	return s.userRepository.GetUsers(offset, limit, filter)
-
 }
 
 func (s *userService) GetUserByID(id uint) (*entity.User, error) {
