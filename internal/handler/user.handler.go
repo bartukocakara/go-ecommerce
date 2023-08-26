@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler interface {
@@ -81,17 +80,8 @@ func (h *userHandler) Create(c *fiber.Ctx) error {
 		// Handle error
 		return err
 	}
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(createUserDTO.Password), bcrypt.DefaultCost)
-
-	user := &entity.User{
-		FirstName: createUserDTO.FirstName,
-		LastName:  createUserDTO.LastName,
-		Email:     createUserDTO.Email,
-		Password:  string(hashedPassword),
-		RoleID:    RoleCustomer,
-	}
-
-	err := h.userService.Create(user)
+	
+	user, err := h.userService.Create(createUserDTO)
 	if err != nil {
 		// Handle error
 		return err

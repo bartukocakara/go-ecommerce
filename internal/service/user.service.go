@@ -4,12 +4,14 @@ import (
 	"ecommerce/internal/dto"
 	"ecommerce/internal/entity"
 	"ecommerce/internal/repository"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
 	List(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
 	Show(id uint) (*entity.User, error)
-	Create(user *entity.User) error
+	Create(user *dto.CreateUserDTO) (*entity.User, error)
 	Update(user *entity.User) error
 	Delete(user *entity.User) error
 }
@@ -38,14 +40,24 @@ func (s *userService) Show(id uint) (*entity.User, error) {
 	return user, nil
 }
 
-func (s *userService) Create(user *entity.User) error {
-	err := s.userRepository.Create(user)
-	if err != nil {
-		// Handle error
-		return err
+func (s *userService) Create(dto *dto.CreateUserDTO) (*entity.User, error) {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(dto.Password), bcrypt.DefaultCost)
+
+	user := &entity.User{
+		FirstName: dto.FirstName,
+		LastName:  dto.LastName,
+		Email:     dto.Email,
+		Password:  string(hashedPassword),
+		RoleID:    RoleCustomer,
 	}
 
-	return nil
+	user, err := s.userRepository.Create(user)
+	if err != nil {
+		// Handle error
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *userService) Update(user *entity.User) error {

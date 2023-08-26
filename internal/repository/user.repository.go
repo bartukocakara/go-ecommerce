@@ -13,7 +13,7 @@ type UserRepository interface {
 	GetUserByEmail(email string) (*entity.User, error)
 	GetUserRoleNameByID(userID uint) (string, error)
 	GetPermissionsByUserID(userID uint) ([]string, error)
-	Create(user *entity.User) error
+	Create(user *entity.User) (*entity.User, error)
 	Update(user *entity.User) error
 	Delete(user *entity.User) error
 }
@@ -100,12 +100,12 @@ func (r *userRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
 	return permissions, nil
 }
 
-func (r *userRepository) Create(user *entity.User) error {
+func (r *userRepository) Create(user *entity.User) (*entity.User, error) {
 	// If the role ID is provided in the user entity, fetch the role from the database
 	if user.RoleID != 0 {
 		var role entity.Role
 		if err := r.db.First(&role, user.RoleID).Error; err != nil {
-			return err
+			return nil, err
 		}
 		// Set the role association on the user entity
 		user.Role = role
@@ -114,10 +114,10 @@ func (r *userRepository) Create(user *entity.User) error {
 	// Create the user record
 	result := r.db.Create(user)
 	if result.Error != nil {
-		return result.Error
+		return nil, result.Error
 	}
 
-	return nil
+	return user, nil
 }
 
 func (r *userRepository) Update(user *entity.User) error {
