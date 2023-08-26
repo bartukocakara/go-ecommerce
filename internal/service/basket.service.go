@@ -7,11 +7,11 @@ import (
 )
 
 type BasketService interface {
-	GetBaskets() ([]entity.Basket, error)
-	GetBasketByID(id uint) (*entity.Basket, error)
-	CreateBasket(createDto *dto.CreateBasketDto) (*entity.Basket, error)
-	UpdateBasket(id uint, basketDto *dto.UpdateBasketDto) (*entity.Basket, error)
-	DeleteBasket(id uint) error
+	List() ([]entity.Basket, error)
+	Show(id uint) (*entity.Basket, error)
+	Create(createDto *dto.CreateBasketDto) (*entity.Basket, error)
+	Update(id uint, basketDto *dto.UpdateBasketDto) (*entity.Basket, error)
+	Delete(id uint) error
 }
 
 type basketService struct {
@@ -24,20 +24,20 @@ func NewBasketService(basketRepository repository.BasketRepository) BasketServic
 	}
 }
 
-func (s *basketService) GetBaskets() ([]entity.Basket, error) {
-	return s.basketRepository.GetBaskets()
+func (s *basketService) List() ([]entity.Basket, error) {
+	return s.basketRepository.List()
 }
 
-func (s *basketService) GetBasketByID(id uint) (*entity.Basket, error) {
-	return s.basketRepository.GetBasketByID(id)
+func (s *basketService) Show(id uint) (*entity.Basket, error) {
+	return s.basketRepository.Show(id)
 }
 
-func (s *basketService) CreateBasket(createDto *dto.CreateBasketDto) (*entity.Basket, error) {
+func (s *basketService) Create(createDto *dto.CreateBasketDto) (*entity.Basket, error) {
 	basket := &entity.Basket{
 		TotalPrice: createDto.TotalPrice,
 	}
 
-	err := s.basketRepository.CreateBasket(basket)
+	err := s.basketRepository.Create(basket)
 	if err != nil {
 		return nil, err
 	}
@@ -45,15 +45,15 @@ func (s *basketService) CreateBasket(createDto *dto.CreateBasketDto) (*entity.Ba
 	return basket, nil
 }
 
-func (s *basketService) UpdateBasket(id uint, updateDto *dto.UpdateBasketDto) (*entity.Basket, error) {
-	Basket, err := s.basketRepository.GetBasketByID(id)
+func (s *basketService) Update(id uint, updateDto *dto.UpdateBasketDto) (*entity.Basket, error) {
+	Basket, err := s.basketRepository.Show(id)
 	if err != nil {
 		return nil, err
 	}
 
 	Basket.TotalPrice = updateDto.TotalPrice
 
-	err = s.basketRepository.UpdateBasket(Basket)
+	err = s.basketRepository.Update(Basket)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +61,13 @@ func (s *basketService) UpdateBasket(id uint, updateDto *dto.UpdateBasketDto) (*
 	return Basket, nil
 }
 
-func (s *basketService) DeleteBasket(id uint) error {
-	Basket, err := s.basketRepository.GetBasketByID(id)
+func (s *basketService) Delete(id uint) error {
+	Basket, err := s.basketRepository.Show(id)
 	if err != nil {
 		return err
 	}
 
-	return s.basketRepository.DeleteBasket(Basket)
+	return s.basketRepository.Delete(Basket)
 }
 
 // Implement the methods of the BasketService interface...

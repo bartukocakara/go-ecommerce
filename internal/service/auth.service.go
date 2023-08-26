@@ -48,7 +48,7 @@ func (s *AuthService) Register(registerDto dto.RegisterDto) (*dto.RegistrationRe
 		Password:  string(hashedPassword),
 	}
 	// Save the user in the repository
-	err = s.UserRepository.CreateUser(user)
+	err = s.UserRepository.Create(user)
 	if err != nil {
 		return nil, err
 	}

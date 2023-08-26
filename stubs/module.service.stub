@@ -7,11 +7,11 @@ import (
 )
 
 type {{ .ModuleTitle }}Service interface {
-	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
-	Get{{ .ModuleTitle }}s(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
-	Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Delete{{ .ModuleTitle }}(id uint) error
+	Show(id uint) (*entity.{{ .ModuleTitle }}, error)
+	List(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
+	Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Delete(id uint) error
 }
 
 type {{ .ModuleCamelTitle }}Service struct {
@@ -24,12 +24,12 @@ func New{{ .ModuleTitle }}Service({{ .ModuleCamelTitle }}Repository repository.{
 	}
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Get{{ .ModuleTitle }}s(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error) {
-	return s.{{ .ModuleCamelTitle }}Repository.Get{{ .ModuleTitle }}s(offset, limit, filter)
+func (s *{{ .ModuleCamelTitle }}Service) List(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error) {
+	return s.{{ .ModuleCamelTitle }}Repository.List(offset, limit, filter)
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
-	{{ .ModuleCamelTitle }}, err := s.{{ .ModuleCamelTitle }}Repository.Get{{ .ModuleTitle }}ByID(id)
+func (s *{{ .ModuleCamelTitle }}Service) Show(id uint) (*entity.{{ .ModuleTitle }}, error) {
+	{{ .ModuleCamelTitle }}, err := s.{{ .ModuleCamelTitle }}Repository.Show(id)
 	if err != nil {
 		// Handle error
 		return nil, err
@@ -38,8 +38,8 @@ func (s *{{ .ModuleCamelTitle }}Service) Get{{ .ModuleTitle }}ByID(id uint) (*en
 	return {{ .ModuleCamelTitle }}, nil
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
-	err := s.{{ .ModuleCamelTitle }}Repository.Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
+func (s *{{ .ModuleCamelTitle }}Service) Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Create({{ .ModuleCamelTitle }})
 	if err != nil {
 		// Handle error
 		return err
@@ -48,8 +48,8 @@ func (s *{{ .ModuleCamelTitle }}Service) Create{{ .ModuleTitle }}({{ .ModuleCame
 	return nil
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
-	err := s.{{ .ModuleCamelTitle }}Repository.Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }})
+func (s *{{ .ModuleCamelTitle }}Service) Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Update({{ .ModuleCamelTitle }})
 	if err != nil {
 		// Handle error
 		return err
@@ -58,8 +58,8 @@ func (s *{{ .ModuleCamelTitle }}Service) Update{{ .ModuleTitle }}({{ .ModuleCame
 	return nil
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Delete{{ .ModuleTitle }}(id uint) error {
-	err := s.{{ .ModuleCamelTitle }}Repository.Delete{{ .ModuleTitle }}(id)
+func (s *{{ .ModuleCamelTitle }}Service) Delete(id uint) error {
+	err := s.{{ .ModuleCamelTitle }}Repository.Delete(id)
 	if err != nil {
 		// Handle error
 		return err

@@ -7,12 +7,12 @@ import (
 )
 
 func SetupBasketRoutes(app *fiber.App, basketHandler handler.BasketHandler) {
-	api := app.Group("/api/v1")
+	api := app.Group("/baskets")
 
 	// Define your Basket routes
-	api.Get("/baskets", basketHandler.GetBaskets)
-	api.Get("/baskets/:id", basketHandler.GetBasketByID)
-	api.Post("/baskets", basketHandler.CreateBasket)
-	api.Put("/baskets/:id", basketHandler.UpdateBasket)
-	api.Delete("/baskets/:id", basketHandler.DeleteBasket)
+	api.Get("/", basketHandler.List)
+	api.Get("/:id", basketHandler.Show)
+	api.Post("/", basketHandler.Create)
+	api.Put("/:id", basketHandler.Update)
+	api.Delete("/:id", basketHandler.Delete)
 }

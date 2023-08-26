@@ -8,14 +8,14 @@ import (
 )
 
 type UserRepository interface {
-	GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
-	GetUserByID(id uint) (*entity.User, error)
+	List(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
+	Show(id uint) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, error)
 	GetUserRoleNameByID(userID uint) (string, error)
 	GetPermissionsByUserID(userID uint) ([]string, error)
-	CreateUser(user *entity.User) error
-	UpdateUser(user *entity.User) error
-	DeleteUser(user *entity.User) error
+	Create(user *entity.User) error
+	Update(user *entity.User) error
+	Delete(user *entity.User) error
 }
 
 type userRepository struct {
@@ -28,7 +28,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) GetUsers(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
+func (r *userRepository) List(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error) {
 	var users []*entity.User
 
 	db := r.db.Model(&entity.User{})
@@ -57,7 +57,7 @@ func (r *userRepository) GetUsers(offset, limit int, filter *dto.FilterUserDTO) 
 	return users, int(count), nil
 }
 
-func (r *userRepository) GetUserByID(id uint) (*entity.User, error) {
+func (r *userRepository) Show(id uint) (*entity.User, error) {
 	var user entity.User
 	result := r.db.First(&user, id)
 	if result.Error != nil {
@@ -100,7 +100,7 @@ func (r *userRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
 	return permissions, nil
 }
 
-func (r *userRepository) CreateUser(user *entity.User) error {
+func (r *userRepository) Create(user *entity.User) error {
 	// If the role ID is provided in the user entity, fetch the role from the database
 	if user.RoleID != 0 {
 		var role entity.Role
@@ -120,7 +120,7 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 	return nil
 }
 
-func (r *userRepository) UpdateUser(user *entity.User) error {
+func (r *userRepository) Update(user *entity.User) error {
 	result := r.db.Save(user)
 	if result.Error != nil {
 		return result.Error
@@ -128,7 +128,7 @@ func (r *userRepository) UpdateUser(user *entity.User) error {
 	return nil
 }
 
-func (r *userRepository) DeleteUser(user *entity.User) error {
+func (r *userRepository) Delete(user *entity.User) error {
 	result := r.db.Delete(user)
 	if result.Error != nil {
 		return result.Error

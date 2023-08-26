@@ -9,9 +9,9 @@ import (
 func Setup{{ .ModuleTitle }}Routes(app *fiber.App, {{ .ModuleCamelTitle }}Handler handler.{{ .ModuleTitle }}Handler) {
 	route := app.Group("/{{ .ModuleVar }}")
 
-	route.Get("/", {{ .ModuleCamelTitle }}Handler.Get{{ .ModuleTitle }}s)
-	route.Get("/:id", {{ .ModuleCamelTitle }}Handler.Get{{ .ModuleTitle }}ByID)
-	route.Post("/", {{ .ModuleCamelTitle }}Handler.Create{{ .ModuleTitle }})
-	route.Put("/:id", {{ .ModuleCamelTitle }}Handler.Update{{ .ModuleTitle }})
-	route.Delete("/:id", {{ .ModuleCamelTitle }}Handler.Delete{{ .ModuleTitle }})
+	route.Get("/", {{ .ModuleCamelTitle }}Handler.List)
+	route.Get("/:id", {{ .ModuleCamelTitle }}Handler.Show)
+	route.Post("/", {{ .ModuleCamelTitle }}Handler.Create)
+	route.Put("/:id", {{ .ModuleCamelTitle }}Handler.Update)
+	route.Delete("/:id", {{ .ModuleCamelTitle }}Handler.Delete)
 }

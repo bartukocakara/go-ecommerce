@@ -8,11 +8,11 @@ import (
 )
 
 type {{ .ModuleTitle }}Repository interface {
-	Get{{ .ModuleTitle }}s(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
-	Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error)
-	Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Delete{{ .ModuleTitle }}(id uint) error
+	List(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
+	Show(id uint) (*entity.{{ .ModuleTitle }}, error)
+	Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Delete(id uint) error
 }
 
 type {{ .ModuleCamelTitle }}Repository struct {
@@ -25,7 +25,7 @@ func New{{ .ModuleTitle }}Repository(db *gorm.DB) {{ .ModuleTitle }}Repository {
 	}
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Get{{ .ModuleTitle }}s(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error) {
+func (r *{{ .ModuleCamelTitle }}Repository) List(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error) {
 	var {{ .ModuleCamelTitle }}s []*entity.{{ .ModuleTitle }}
 
 	db := r.db.Model(&entity.{{ .ModuleTitle }}{})
@@ -48,7 +48,7 @@ func (r *{{ .ModuleCamelTitle }}Repository) Get{{ .ModuleTitle }}s(offset, limit
 	return {{ .ModuleCamelTitle }}s, int(count), nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Get{{ .ModuleTitle }}ByID(id uint) (*entity.{{ .ModuleTitle }}, error) {
+func (r *{{ .ModuleCamelTitle }}Repository) Show(id uint) (*entity.{{ .ModuleTitle }}, error) {
 	var {{ .ModuleCamelTitle }} entity.{{ .ModuleTitle }}
 	result := r.db.First(&{{ .ModuleCamelTitle }}, id)
 	if result.Error != nil {
@@ -57,7 +57,7 @@ func (r *{{ .ModuleCamelTitle }}Repository) Get{{ .ModuleTitle }}ByID(id uint) (
 	return &{{ .ModuleCamelTitle }}, nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Create{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+func (r *{{ .ModuleCamelTitle }}Repository) Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
 	result := r.db.Create({{ .ModuleCamelTitle }})
 	if result.Error != nil {
 		return result.Error
@@ -65,7 +65,7 @@ func (r *{{ .ModuleCamelTitle }}Repository) Create{{ .ModuleTitle }}({{ .ModuleC
 	return nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Update{{ .ModuleTitle }}({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+func (r *{{ .ModuleCamelTitle }}Repository) Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
 	result := r.db.Save({{ .ModuleCamelTitle }})
 	if result.Error != nil {
 		return result.Error
@@ -73,7 +73,7 @@ func (r *{{ .ModuleCamelTitle }}Repository) Update{{ .ModuleTitle }}({{ .ModuleC
 	return nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Delete{{ .ModuleTitle }}(id uint) error {
+func (r *{{ .ModuleCamelTitle }}Repository) Delete(id uint) error {
 	result := r.db.Delete(id)
 	if result.Error != nil {
 		return result.Error

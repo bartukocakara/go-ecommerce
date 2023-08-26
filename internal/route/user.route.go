@@ -16,9 +16,9 @@ func SetupUserRoutes(app *fiber.App, userHandler handler.UserHandler, db *gorm.D
 		repository.NewUserRepository(db)),
 		// middleware.PermissionMiddleware("list_user",
 		// 	repository.NewUserRepository(db)),
-		userHandler.GetUsers)
-	userGroup.Get("/:id", userHandler.GetUserByID)
-	userGroup.Post("/", userHandler.CreateUser)
-	userGroup.Put("/:id", userHandler.UpdateUser)
-	userGroup.Delete("/:id", userHandler.DeleteUser)
+		userHandler.List)
+	userGroup.Get("/:id", userHandler.Show)
+	userGroup.Post("/", userHandler.Create)
+	userGroup.Put("/:id", userHandler.Update)
+	userGroup.Delete("/:id", userHandler.Delete)
 }

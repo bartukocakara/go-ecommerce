@@ -7,11 +7,11 @@ import (
 )
 
 type BasketRepository interface {
-	GetBaskets() ([]entity.Basket, error)
-	GetBasketByID(id uint) (*entity.Basket, error)
-	CreateBasket(basket *entity.Basket) error
-	UpdateBasket(basket *entity.Basket) error
-	DeleteBasket(basket *entity.Basket) error
+	List() ([]entity.Basket, error)
+	Show(id uint) (*entity.Basket, error)
+	Create(basket *entity.Basket) error
+	Update(basket *entity.Basket) error
+	Delete(basket *entity.Basket) error
 }
 
 type basketRepository struct {
@@ -24,7 +24,7 @@ func NewBasketRepository(db *gorm.DB) BasketRepository {
 	}
 }
 
-func (r *basketRepository) GetBaskets() ([]entity.Basket, error) {
+func (r *basketRepository) List() ([]entity.Basket, error) {
 	var baskets []entity.Basket
 	result := r.db.Find(&baskets)
 	if result.Error != nil {
@@ -33,7 +33,7 @@ func (r *basketRepository) GetBaskets() ([]entity.Basket, error) {
 	return baskets, nil
 }
 
-func (r *basketRepository) GetBasketByID(id uint) (*entity.Basket, error) {
+func (r *basketRepository) Show(id uint) (*entity.Basket, error) {
 	var basket entity.Basket
 	result := r.db.First(&basket, id)
 	if result.Error != nil {
@@ -42,7 +42,7 @@ func (r *basketRepository) GetBasketByID(id uint) (*entity.Basket, error) {
 	return &basket, nil
 }
 
-func (r *basketRepository) CreateBasket(basket *entity.Basket) error {
+func (r *basketRepository) Create(basket *entity.Basket) error {
 	result := r.db.Create(basket)
 	if result.Error != nil {
 		return result.Error
@@ -50,7 +50,7 @@ func (r *basketRepository) CreateBasket(basket *entity.Basket) error {
 	return nil
 }
 
-func (r *basketRepository) UpdateBasket(basket *entity.Basket) error {
+func (r *basketRepository) Update(basket *entity.Basket) error {
 	result := r.db.Save(basket)
 	if result.Error != nil {
 		return result.Error
@@ -58,7 +58,7 @@ func (r *basketRepository) UpdateBasket(basket *entity.Basket) error {
 	return nil
 }
 
-func (r *basketRepository) DeleteBasket(basket *entity.Basket) error {
+func (r *basketRepository) Delete(basket *entity.Basket) error {
 	result := r.db.Delete(basket)
 	if result.Error != nil {
 		return result.Error
