@@ -76,6 +76,7 @@ seed command
 go run main.go seed
 ```
 create module command (entity, container, dto, route, handler, service, repository, migration, seeder)
+Then you should add  module layers to container/container.go in Container struct
 ```
 go run main.go genrate-file {MODUL_NAME}
 ```
