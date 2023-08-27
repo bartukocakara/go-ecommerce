@@ -1,8 +1,3 @@
-Chat gpt  prompt
-```
-can you provide me full module layer for basket module with interface
-```
-
 ASCII Treedir
 
 ```
