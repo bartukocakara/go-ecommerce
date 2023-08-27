@@ -23,6 +23,7 @@ ASCII Treedir
 │   ├── lib/
 │   │   └── mail.go
 │   ├── mail/
+│   │   ├── forgot-password.go
 │   │   └── welcome.mail.go
 │   ├── middleware/
 │   │   ├── jwt.middleware.go
@@ -35,13 +36,28 @@ ASCII Treedir
 │   ├── migration/
 │   │   └── user.migration.go
 │   │   └── role.migration.go
+├── stubs/
+│   ├── module.container.stub
+│   ├── module.dto.stub
+│   ├── module.entity.stub
+│   ├── module.handler.stub
+│   ├── module.migration.stub
+│   ├── module.repository.stub
+│   ├── module.route.stub
+│   ├── module.seeder.stub
+│   └── module.service.stub
 ├── container/
 │   ├── user.container.go
 │   └── role.container.go
+├── public/
+│   └── mails
+│         ├── forget-password-mail.html
+│         └── welcome-mail.html
 ├── config/
 │   ├── database.go
+│   ├── mail.go
 │   └── app.go
-├── databse/
+├── database/
 │   ├── migration/
 │   │    └── user.migration.go
 │   ├── seeder/
@@ -58,4 +74,8 @@ go run main.go migrate
 seed command 
 ```
 go run main.go seed
+```
+create module command (entity, container, dto, route, handler, service, repository, migration, seeder)
+```
+go run main.go genrate-file {MODUL_NAME}
 ```
