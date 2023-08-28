@@ -9,11 +9,11 @@ import (
 )
 
 type BasketItemHandler interface {
-	GetBasketItems(c *fiber.Ctx) error
-	GetBasketItemByID(c *fiber.Ctx) error
-	CreateBasketItem(c *fiber.Ctx) error
-	UpdateBasketItem(c *fiber.Ctx) error
-	DeleteBasketItem(c *fiber.Ctx) error
+	List(c *fiber.Ctx) error
+	Show(c *fiber.Ctx) error
+	Create(c *fiber.Ctx) error
+	Update(c *fiber.Ctx) error
+	Delete(c *fiber.Ctx) error
 }
 
 type basketItemHandler struct {
@@ -26,8 +26,8 @@ func NewBasketItemHandler(basketItemService service.BasketItemService) BasketIte
 	}
 }
 
-func (h *basketItemHandler) GetBasketItems(c *fiber.Ctx) error {
-	basketItems, err := h.basketItemService.GetBasketItems()
+func (h *basketItemHandler) List(c *fiber.Ctx) error {
+	basketItems, err := h.basketItemService.List()
 	if err != nil {
 		return err
 	}
@@ -35,13 +35,13 @@ func (h *basketItemHandler) GetBasketItems(c *fiber.Ctx) error {
 	return c.JSON(basketItems)
 }
 
-func (h *basketItemHandler) GetBasketItemByID(c *fiber.Ctx) error {
+func (h *basketItemHandler) Show(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
 		return err
 	}
 
-	Basket, err := h.basketItemService.GetBasketItemByID(uint(id))
+	Basket, err := h.basketItemService.Show(uint(id))
 	if err != nil {
 		return err
 	}
@@ -49,14 +49,14 @@ func (h *basketItemHandler) GetBasketItemByID(c *fiber.Ctx) error {
 	return c.JSON(Basket)
 }
 
-func (h *basketItemHandler) CreateBasketItem(c *fiber.Ctx) error {
+func (h *basketItemHandler) Create(c *fiber.Ctx) error {
 	var createDto dto.CreateBasketItemDto
 	err := c.BodyParser(&createDto)
 	if err != nil {
 		return err
 	}
 
-	Basket, err := h.basketItemService.CreateBasketItem(&createDto)
+	Basket, err := h.basketItemService.Create(&createDto)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (h *basketItemHandler) CreateBasketItem(c *fiber.Ctx) error {
 	return c.JSON(Basket)
 }
 
-func (h *basketItemHandler) UpdateBasketItem(c *fiber.Ctx) error {
+func (h *basketItemHandler) Update(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (h *basketItemHandler) UpdateBasketItem(c *fiber.Ctx) error {
 		return err
 	}
 
-	Basket, err := h.basketItemService.UpdateBasketItem(uint(id), &updateDto)
+	Basket, err := h.basketItemService.Update(uint(id), &updateDto)
 	if err != nil {
 		return err
 	}
@@ -84,13 +84,13 @@ func (h *basketItemHandler) UpdateBasketItem(c *fiber.Ctx) error {
 	return c.JSON(Basket)
 }
 
-func (h *basketItemHandler) DeleteBasketItem(c *fiber.Ctx) error {
+func (h *basketItemHandler) Delete(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
 		return err
 	}
 
-	err = h.basketItemService.DeleteBasketItem(uint(id))
+	err = h.basketItemService.Delete(uint(id))
 	if err != nil {
 		return err
 	}

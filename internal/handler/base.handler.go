@@ -51,7 +51,7 @@ func getStatusFromCode(statusCode int) string {
 	return "error"
 }
 
-func CreateResponse(statusCode int, message string, data fiber.Map) fiber.Map {
+func CreateResponse(statusCode int, message string, data interface{}) fiber.Map {
 	return fiber.Map{
 		"message":    message,
 		"statusCode": statusCode,
@@ -117,7 +117,7 @@ func createPaginatedResponse(c *fiber.Ctx, statusCode int, message string, data 
 }
 
 func createErrorResponse(c *fiber.Ctx, status int, message string) error {
-	return c.JSON(response.GenericErrorResponse{
+	return c.Status(status).JSON(response.GenericErrorResponse{
 		Message:    message,
 		StatusCode: status,
 	})

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"ecommerce/internal/dto"
-	"ecommerce/internal/entity"
 	"ecommerce/internal/service"
 	"github.com/gofiber/fiber/v2"
 )
@@ -54,52 +53,53 @@ func (h *{{ .ModuleCamelTitle }}Handler) Show(c *fiber.Ctx) error {
 
 	{{ .ModuleCamelTitle }}, err := h.{{ .ModuleCamelTitle }}Service.Show(id)
 	if err != nil {
-		return handleError(c, err)
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching {{ .ModuleCamelTitle }}")
 	}
 
-	return c.JSON({{ .ModuleCamelTitle }})
+	response := CreateResponse(fiber.StatusOK, "OK", {{ .ModuleCamelTitle }})
+	return c.Status(fiber.StatusBadRequest).JSON(response)
 }
 
 func (h *{{ .ModuleCamelTitle }}Handler) Create(c *fiber.Ctx) error {
-	{{ .ModuleCamelTitle }} := new(entity.{{ .ModuleTitle }})
+	create{{ .ModuleTitle }}DTO := new(dto.Create{{ .ModuleTitle }}DTO)
 
-	if err := parseBody(c, {{ .ModuleCamelTitle }}); err != nil {
-		return handleError(c, err)
+	if err := parseBody(c, create{{ .ModuleTitle }}DTO); err != nil {
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error creating {{ .ModuleCamelTitle }}")
 	}
 
-	err := h.{{ .ModuleCamelTitle }}Service.Create({{ .ModuleCamelTitle }})
+	{{ .ModuleCamelTitle }}, err := h.{{ .ModuleCamelTitle }}Service.Create(create{{ .ModuleTitle }}DTO)
 	if err != nil {
-		return handleError(c, err)
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error creating {{ .ModuleCamelTitle }}")
 	}
 
-	return c.JSON({{ .ModuleCamelTitle }})
+	response := CreateResponse(fiber.StatusCreated, "Created", {{ .ModuleCamelTitle }})
+	return c.Status(fiber.StatusBadRequest).JSON(response)
 }
 
 func (h *{{ .ModuleCamelTitle }}Handler) Update(c *fiber.Ctx) error {
 	id := parseIDParam(c)
-	{{ .ModuleCamelTitle }} := new(entity.{{ .ModuleTitle }})
+	update{{ .ModuleTitle }}DTO := new(dto.Update{{ .ModuleTitle }}DTO)
 
-	if err := parseBody(c, {{ .ModuleCamelTitle }}); err != nil {
+	if err := parseBody(c, update{{ .ModuleTitle }}DTO); err != nil {
 		return handleError(c, err)
 	}
 
-	{{ .ModuleCamelTitle }}.ID = id
-
-	err := h.{{ .ModuleCamelTitle }}Service.Update({{ .ModuleCamelTitle }})
+	err := h.{{ .ModuleCamelTitle }}Service.Update(id, update{{ .ModuleTitle }}DTO)
 	if err != nil {
-		return handleError(c, err)
+		return createErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON({{ .ModuleCamelTitle }})
+	response := CreateResponse(fiber.StatusNoContent, "Update", err)
+	return c.Status(fiber.StatusNoContent).JSON(response)
 }
 
 func (h *{{ .ModuleCamelTitle }}Handler) Delete(c *fiber.Ctx) error {
 	id := parseIDParam(c)
-
 	err := h.{{ .ModuleCamelTitle }}Service.Delete(id)
 	if err != nil {
-		return handleError(c, err)
+		return createErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	response := CreateResponse(fiber.StatusNoContent, "Delete", err)
+	return c.Status(fiber.StatusNoContent).JSON(response)
 }

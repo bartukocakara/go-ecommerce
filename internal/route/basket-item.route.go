@@ -10,9 +10,9 @@ func SetupBasketItemRoutes(app *fiber.App, basketItemHandler handler.BasketItemH
 	api := app.Group("/api/v1")
 
 	// Define your Basket routes
-	api.Get("/basket-items", basketItemHandler.GetBasketItems)
-	api.Get("/basket-items/:id", basketItemHandler.GetBasketItemByID)
-	api.Post("/basket-items", basketItemHandler.CreateBasketItem)
-	api.Put("/basket-items/:id", basketItemHandler.UpdateBasketItem)
-	api.Delete("/basket-items/:id", basketItemHandler.DeleteBasketItem)
+	api.Get("/basket-items", basketItemHandler.List)
+	api.Get("/basket-items/:id", basketItemHandler.Show)
+	api.Post("/basket-items", basketItemHandler.Create)
+	api.Put("/basket-items/:id", basketItemHandler.Update)
+	api.Delete("/basket-items/:id", basketItemHandler.Delete)
 }

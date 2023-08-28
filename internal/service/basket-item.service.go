@@ -7,11 +7,11 @@ import (
 )
 
 type BasketItemService interface {
-	GetBasketItems() ([]entity.BasketItem, error)
-	GetBasketItemByID(id uint) (*entity.BasketItem, error)
-	CreateBasketItem(createDto *dto.CreateBasketItemDto) (*entity.BasketItem, error)
-	UpdateBasketItem(id uint, basketItemDto *dto.UpdateBasketItemDto) (*entity.BasketItem, error)
-	DeleteBasketItem(id uint) error
+	List() ([]entity.BasketItem, error)
+	Show(id uint) (*entity.BasketItem, error)
+	Create(createDto *dto.CreateBasketItemDto) (*entity.BasketItem, error)
+	Update(id uint, basketItemDto *dto.UpdateBasketItemDto) (*entity.BasketItem, error)
+	Delete(id uint) error
 }
 
 type basketItemService struct {
@@ -24,20 +24,20 @@ func NewBasketItemService(basketItemRepository repository.BasketItemRepository) 
 	}
 }
 
-func (s *basketItemService) GetBasketItems() ([]entity.BasketItem, error) {
-	return s.basketItemRepository.GetBasketItems()
+func (s *basketItemService) List() ([]entity.BasketItem, error) {
+	return s.basketItemRepository.List()
 }
 
-func (s *basketItemService) GetBasketItemByID(id uint) (*entity.BasketItem, error) {
-	return s.basketItemRepository.GetBasketItemByID(id)
+func (s *basketItemService) Show(id uint) (*entity.BasketItem, error) {
+	return s.basketItemRepository.Show(id)
 }
 
-func (s *basketItemService) CreateBasketItem(createDto *dto.CreateBasketItemDto) (*entity.BasketItem, error) {
+func (s *basketItemService) Create(createDto *dto.CreateBasketItemDto) (*entity.BasketItem, error) {
 	basketItem := &entity.BasketItem{
 		Quantity: createDto.Quantity,
 	}
 
-	err := s.basketItemRepository.CreateBasketItem(basketItem)
+	err := s.basketItemRepository.Create(basketItem)
 	if err != nil {
 		return nil, err
 	}
@@ -45,15 +45,15 @@ func (s *basketItemService) CreateBasketItem(createDto *dto.CreateBasketItemDto)
 	return basketItem, nil
 }
 
-func (s *basketItemService) UpdateBasketItem(id uint, updateDto *dto.UpdateBasketItemDto) (*entity.BasketItem, error) {
-	basketItem, err := s.basketItemRepository.GetBasketItemByID(id)
+func (s *basketItemService) Update(id uint, updateDto *dto.UpdateBasketItemDto) (*entity.BasketItem, error) {
+	basketItem, err := s.basketItemRepository.Show(id)
 	if err != nil {
 		return nil, err
 	}
 
 	basketItem.Quantity = updateDto.Quantity
 
-	err = s.basketItemRepository.UpdateBasketItem(basketItem)
+	err = s.basketItemRepository.Update(basketItem)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +61,13 @@ func (s *basketItemService) UpdateBasketItem(id uint, updateDto *dto.UpdateBaske
 	return basketItem, nil
 }
 
-func (s *basketItemService) DeleteBasketItem(id uint) error {
-	basketItem, err := s.basketItemRepository.GetBasketItemByID(id)
+func (s *basketItemService) Delete(id uint) error {
+	basketItem, err := s.basketItemRepository.Show(id)
 	if err != nil {
 		return err
 	}
 
-	return s.basketItemRepository.DeleteBasketItem(basketItem)
+	return s.basketItemRepository.Delete(basketItem)
 }
 
 // Implement the methods of the BasketItemService interface...

@@ -14,8 +14,8 @@ type UserRepository interface {
 	GetUserRoleNameByID(userID uint) (string, error)
 	GetPermissionsByUserID(userID uint) ([]string, error)
 	Create(user *entity.User) (*entity.User, error)
-	Update(user *entity.User) error
-	Delete(user *entity.User) error
+	Update(id uint, user *entity.User) error
+	Delete(id uint) error
 }
 
 type userRepository struct {
@@ -120,18 +120,26 @@ func (r *userRepository) Create(user *entity.User) (*entity.User, error) {
 	return user, nil
 }
 
-func (r *userRepository) Update(user *entity.User) error {
-	result := r.db.Save(user)
+func (r *userRepository) Update(id uint, user *entity.User) error {
+	result := r.db.Model(&entity.User{}).Where("id = ?", id).Updates(user)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func (r *userRepository) Delete(user *entity.User) error {
-	result := r.db.Delete(user)
+func (r *userRepository) Delete(id uint) error {
+	// Fetch the user by userID first
+	user := &entity.User{} // Replace User with your actual user struct
+	result := r.db.First(user, id)
 	if result.Error != nil {
-		return result.Error
+		return result.Error // Return error if user is not found
+	}
+
+	// Delete the user from the database
+	result = r.db.Delete(user)
+	if result.Error != nil {
+		return result.Error // Return error if deletion fails
 	}
 	return nil
 }

@@ -16,30 +16,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type stubTemplates struct {
-	Handler    string
-	Repository string
-	Service    string
-	Route      string
-	Dto        string
-	Entity     string
-	Container  string
-	Seeder     string
-	Migration  string
-}
-
-const (
-	handlerStubPath    = "./stubs/module.handler.stub"
-	repositoryStubPath = "./stubs/module.repository.stub"
-	serviceStubPath    = "./stubs/module.service.stub"
-	routeStubPath      = "./stubs/module.route.stub"
-	dtoStubPath        = "./stubs/module.dto.stub"
-	entityStubPath     = "./stubs/module.entity.stub"
-	containerStubPath  = "./stubs/module.container.stub"
-	seederStubPath     = "./stubs/module.seeder.stub"
-	migrationStubPath  = "./stubs/module.migration.stub"
-)
-
 func NewApp() (*fiber.App, error) {
 	app := fiber.New()
 	validate := NewValidator()
@@ -131,7 +107,6 @@ func commands(db *gorm.DB) {
 	}
 }
 
-
 func runSeeders(db *gorm.DB) {
 	// Run your seeders here
 	// Example:
@@ -170,7 +145,6 @@ func runMigrations(db *gorm.DB) {
 
 	fmt.Println("Running migrations...")
 }
-
 
 func NewValidator() *validator.Validate {
 	return validator.New()

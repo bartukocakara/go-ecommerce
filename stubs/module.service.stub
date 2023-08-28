@@ -9,8 +9,8 @@ import (
 type {{ .ModuleTitle }}Service interface {
 	Show(id uint) (*entity.{{ .ModuleTitle }}, error)
 	List(offset, limit int, filterDto *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
-	Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Create({{ .ModuleCamelTitle }} *dto.Create{{ .ModuleTitle }}DTO) (*entity.{{ .ModuleTitle }}, error)
+	Update(id uint, {{ .ModuleCamelTitle }} *dto.Update{{ .ModuleTitle }}DTO) error
 	Delete(id uint) error
 }
 
@@ -38,18 +38,25 @@ func (s *{{ .ModuleCamelTitle }}Service) Show(id uint) (*entity.{{ .ModuleTitle 
 	return {{ .ModuleCamelTitle }}, nil
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
-	err := s.{{ .ModuleCamelTitle }}Repository.Create({{ .ModuleCamelTitle }})
+func (s *{{ .ModuleCamelTitle }}Service) Create(dto *dto.Create{{ .ModuleTitle }}DTO) (*entity.{{ .ModuleTitle }}, error) {
+	{{ .ModuleCamelTitle }} := &entity.{{ .ModuleTitle }}{
+		Name: dto.Name,
+	}
+	{{ .ModuleCamelTitle }}, err := s.{{ .ModuleCamelTitle }}Repository.Create({{ .ModuleCamelTitle }})
 	if err != nil {
 		// Handle error
-		return err
+		return nil, err
 	}
 
-	return nil
+	return {{ .ModuleCamelTitle }}, nil
 }
 
-func (s *{{ .ModuleCamelTitle }}Service) Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
-	err := s.{{ .ModuleCamelTitle }}Repository.Update({{ .ModuleCamelTitle }})
+func (s *{{ .ModuleCamelTitle }}Service) Update(id uint, dto *dto.Update{{ .ModuleTitle }}DTO) error {
+	{{ .ModuleCamelTitle }} := &entity.{{ .ModuleTitle }}{
+		Name: dto.Name,
+	}
+	
+	err := s.{{ .ModuleCamelTitle }}Repository.Update(id, {{ .ModuleCamelTitle }})
 	if err != nil {
 		// Handle error
 		return err

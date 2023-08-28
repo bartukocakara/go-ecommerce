@@ -2,7 +2,6 @@ package handler
 
 import (
 	"ecommerce/internal/dto"
-	"ecommerce/internal/entity"
 	"ecommerce/internal/service"
 	"strconv"
 
@@ -67,80 +66,52 @@ func (h *userHandler) Show(c *fiber.Ctx) error {
 
 	user, err := h.userService.Show(uint(userID))
 	if err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error fetching user")
 	}
-
-	return c.JSON(user)
+	response := CreateResponse(fiber.StatusOK, "OK", user)
+	return c.Status(fiber.StatusBadRequest).JSON(response)
 }
 
 func (h *userHandler) Create(c *fiber.Ctx) error {
 	createUserDTO := new(dto.CreateUserDTO)
 	if err := c.BodyParser(createUserDTO); err != nil {
-		// Handle error
-		return err
-	}
-	
-	user, err := h.userService.Create(createUserDTO)
-	if err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error creating user")
 	}
 
-	return c.JSON(user)
+	user, err := h.userService.Create(createUserDTO)
+	if err != nil {
+		return createErrorResponse(c, fiber.StatusInternalServerError, "Error creating user")
+	}
+
+	response := CreateResponse(fiber.StatusCreated, "Created", user)
+	return c.Status(fiber.StatusBadRequest).JSON(response)
 }
 
 func (h *userHandler) Update(c *fiber.Ctx) error {
-	id := c.Params("id")
-	userID, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		// Handle error
-		return err
-	}
+	id := parseIDParam(c)
 
 	updateUserDTO := new(dto.UpdateUserDTO)
 	if err := c.BodyParser(updateUserDTO); err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusBadRequest, "Error parsing body")
 	}
 
-	user := &entity.User{
-		ID:        uint(userID),
-		FirstName: updateUserDTO.FirstName,
-		LastName:  updateUserDTO.LastName,
-		Email:     updateUserDTO.Email,
-	}
-
-	err = h.userService.Update(user)
+	err := h.userService.Update(id, updateUserDTO)
 	if err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusBadRequest, "Error updating user")
 	}
 
-	return c.JSON(user)
+	response := CreateResponse(fiber.StatusNoContent, "Updated", err)
+	return c.Status(fiber.StatusNoContent).JSON(response)
 }
 
 func (h *userHandler) Delete(c *fiber.Ctx) error {
-	id := c.Params("id")
-	userID, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		// Handle error
-		return err
-	}
+	id := parseIDParam(c)
 
-	user, err := h.userService.Show(uint(userID))
+	err := h.userService.Delete(id)
 	if err != nil {
-		// Handle error
-		return err
+		return createErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
+	response := CreateResponse(fiber.StatusNoContent, "Delete", err)
+	return c.Status(fiber.StatusNoContent).JSON(response)
 
-	err = h.userService.Delete(user)
-	if err != nil {
-		// Handle error
-		return err
-	}
-
-	return c.JSON(fiber.Map{
-		"message": "User deleted successfully",
-	})
 }

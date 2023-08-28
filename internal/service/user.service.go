@@ -12,8 +12,8 @@ type UserService interface {
 	List(offset, limit int, filter *dto.FilterUserDTO) ([]*entity.User, int, error)
 	Show(id uint) (*entity.User, error)
 	Create(user *dto.CreateUserDTO) (*entity.User, error)
-	Update(user *entity.User) error
-	Delete(user *entity.User) error
+	Update(id uint, user *dto.UpdateUserDTO) error
+	Delete(id uint) error
 }
 
 type userService struct {
@@ -60,8 +60,17 @@ func (s *userService) Create(dto *dto.CreateUserDTO) (*entity.User, error) {
 	return user, nil
 }
 
-func (s *userService) Update(user *entity.User) error {
-	err := s.userRepository.Update(user)
+func (s *userService) Update(id uint, dto *dto.UpdateUserDTO) error {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(dto.Password), bcrypt.DefaultCost)
+
+	user := &entity.User{
+		FirstName: dto.FirstName,
+		LastName:  dto.LastName,
+		Email:     dto.Email,
+		Password:  string(hashedPassword),
+		RoleID:    dto.RoleID,
+	}
+	err := s.userRepository.Update(id, user)
 	if err != nil {
 		// Handle error
 		return err
@@ -70,8 +79,8 @@ func (s *userService) Update(user *entity.User) error {
 	return nil
 }
 
-func (s *userService) Delete(user *entity.User) error {
-	err := s.userRepository.Delete(user)
+func (s *userService) Delete(id uint) error {
+	err := s.userRepository.Delete(id)
 	if err != nil {
 		// Handle error
 		return err

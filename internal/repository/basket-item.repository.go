@@ -7,11 +7,11 @@ import (
 )
 
 type BasketItemRepository interface {
-	GetBasketItems() ([]entity.BasketItem, error)
-	GetBasketItemByID(id uint) (*entity.BasketItem, error)
-	CreateBasketItem(basketItem *entity.BasketItem) error
-	UpdateBasketItem(basketItem *entity.BasketItem) error
-	DeleteBasketItem(basketItem *entity.BasketItem) error
+	List() ([]entity.BasketItem, error)
+	Show(id uint) (*entity.BasketItem, error)
+	Create(basketItem *entity.BasketItem) error
+	Update(basketItem *entity.BasketItem) error
+	Delete(basketItem *entity.BasketItem) error
 }
 
 type basketItemRepository struct {
@@ -24,7 +24,7 @@ func NewBasketItemRepository(db *gorm.DB) BasketItemRepository {
 	}
 }
 
-func (r *basketItemRepository) GetBasketItems() ([]entity.BasketItem, error) {
+func (r *basketItemRepository) List() ([]entity.BasketItem, error) {
 	var basketItems []entity.BasketItem
 	result := r.db.Find(&basketItems)
 	if result.Error != nil {
@@ -33,7 +33,7 @@ func (r *basketItemRepository) GetBasketItems() ([]entity.BasketItem, error) {
 	return basketItems, nil
 }
 
-func (r *basketItemRepository) GetBasketItemByID(id uint) (*entity.BasketItem, error) {
+func (r *basketItemRepository) Show(id uint) (*entity.BasketItem, error) {
 	var basketItem entity.BasketItem
 	result := r.db.First(&basketItem, id)
 	if result.Error != nil {
@@ -42,7 +42,7 @@ func (r *basketItemRepository) GetBasketItemByID(id uint) (*entity.BasketItem, e
 	return &basketItem, nil
 }
 
-func (r *basketItemRepository) CreateBasketItem(basketItem *entity.BasketItem) error {
+func (r *basketItemRepository) Create(basketItem *entity.BasketItem) error {
 	result := r.db.Create(basketItem)
 	if result.Error != nil {
 		return result.Error
@@ -50,7 +50,7 @@ func (r *basketItemRepository) CreateBasketItem(basketItem *entity.BasketItem) e
 	return nil
 }
 
-func (r *basketItemRepository) UpdateBasketItem(basketItem *entity.BasketItem) error {
+func (r *basketItemRepository) Update(basketItem *entity.BasketItem) error {
 	result := r.db.Save(basketItem)
 	if result.Error != nil {
 		return result.Error
@@ -58,7 +58,7 @@ func (r *basketItemRepository) UpdateBasketItem(basketItem *entity.BasketItem) e
 	return nil
 }
 
-func (r *basketItemRepository) DeleteBasketItem(basketItem *entity.BasketItem) error {
+func (r *basketItemRepository) Delete(basketItem *entity.BasketItem) error {
 	result := r.db.Delete(basketItem)
 	if result.Error != nil {
 		return result.Error

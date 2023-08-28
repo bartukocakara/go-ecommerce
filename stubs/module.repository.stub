@@ -10,8 +10,8 @@ import (
 type {{ .ModuleTitle }}Repository interface {
 	List(offset, limit int, filter *dto.Filter{{ .ModuleTitle }}DTO) ([]*entity.{{ .ModuleTitle }}, int, error)
 	Show(id uint) (*entity.{{ .ModuleTitle }}, error)
-	Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
-	Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
+	Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) (*entity.{{ .ModuleTitle }}, error)
+	Update(id uint, {{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error
 	Delete(id uint) error
 }
 
@@ -57,16 +57,16 @@ func (r *{{ .ModuleCamelTitle }}Repository) Show(id uint) (*entity.{{ .ModuleTit
 	return &{{ .ModuleCamelTitle }}, nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+func (r *{{ .ModuleCamelTitle }}Repository) Create({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) (*entity.{{ .ModuleTitle }}, error) {
 	result := r.db.Create({{ .ModuleCamelTitle }})
 	if result.Error != nil {
-		return result.Error
+		return nil, result.Error
 	}
-	return nil
+	return {{ .ModuleCamelTitle }}, nil
 }
 
-func (r *{{ .ModuleCamelTitle }}Repository) Update({{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
-	result := r.db.Save({{ .ModuleCamelTitle }})
+func (r *{{ .ModuleCamelTitle }}Repository) Update(id uint, {{ .ModuleCamelTitle }} *entity.{{ .ModuleTitle }}) error {
+	result := r.db.Model(&entity.{{ .ModuleTitle }}{}).Where("id = ?", id).Updates({{ .ModuleCamelTitle }})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -74,9 +74,17 @@ func (r *{{ .ModuleCamelTitle }}Repository) Update({{ .ModuleCamelTitle }} *enti
 }
 
 func (r *{{ .ModuleCamelTitle }}Repository) Delete(id uint) error {
-	result := r.db.Delete(id)
+	// Fetch the {{ .ModuleCamelTitle }} by {{ .ModuleCamelTitle }}ID first
+	{{ .ModuleCamelTitle }} := &entity.{{ .ModuleTitle }}{} // Replace {{ .ModuleCamelTitle }} with your actual {{ .ModuleCamelTitle }} struct
+	result := r.db.First({{ .ModuleCamelTitle }}, id)
 	if result.Error != nil {
-		return result.Error
+		return result.Error // Return error if {{ .ModuleCamelTitle }} is not found
+	}
+
+	// Delete the {{ .ModuleCamelTitle }} from the database
+	result = r.db.Delete({{ .ModuleCamelTitle }})
+	if result.Error != nil {
+		return result.Error // Return error if deletion fails
 	}
 	return nil
 }

@@ -4,9 +4,32 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-	"strings"
 	"path/filepath"
+	"strings"
+)
 
+type stubTemplates struct {
+	Handler    string
+	Repository string
+	Service    string
+	Route      string
+	Dto        string
+	Entity     string
+	Container  string
+	Seeder     string
+	Migration  string
+}
+
+const (
+	handlerStubPath    = "./stubs/module.handler.stub"
+	repositoryStubPath = "./stubs/module.repository.stub"
+	serviceStubPath    = "./stubs/module.service.stub"
+	routeStubPath      = "./stubs/module.route.stub"
+	dtoStubPath        = "./stubs/module.dto.stub"
+	entityStubPath     = "./stubs/module.entity.stub"
+	containerStubPath  = "./stubs/module.container.stub"
+	seederStubPath     = "./stubs/module.seeder.stub"
+	migrationStubPath  = "./stubs/module.migration.stub"
 )
 
 type StubData struct {
