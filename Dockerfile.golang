@@ -1,0 +1,17 @@
+# Use an official Golang runtime as a parent image
+FROM golang:1.16
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install Fresh for automatic code reloading
+RUN go get github.com/pilu/fresh
+
+# Make port 8081 available to the world outside this container
+EXPOSE 8081
+
+# Use Fresh for automatic code reloading
+CMD ["fresh"]

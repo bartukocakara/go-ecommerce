@@ -1,0 +1,61 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: 123456
+
+  go-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.golang
+    ports:
+      - "8081:8081" # Change to the port your Golang app listens on
+    volumes:
+      - ./:/app # Mount your Golang app code
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8082:8080" # Change to the port your Swagger UI should run on
+    environment:
+      SWAGGER_JSON: /api/swagger.json
+    volumes:
+      - ./swagger/swagger.json:/api/swagger.json # Mount your Swagger JSON file
+
+volumes:
+  postgres_data:
